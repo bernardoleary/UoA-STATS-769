@@ -10,27 +10,28 @@ output: word_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Read in data
+## Read in data and Linux commands 
 
-Date format is CSV (Comma Separated Values), reading into R using the read.csv function.
+Date format is CSV (Comma Separated Values), reading into R using the read.csv function. The machine that was used to create the report is a Windows 10 machine that has an Ubuntu Bash shell built into it as part of the WSL implementation (https://docs.microsoft.com/en-us/windows/wsl/install-win10). Once access was gained to the STATS 769 machines, the files were copied to the WIndows 10 machine used to create the report using the scp command, as follows:
+
+```{}
+bernardo@PKS10198:/mnt/d/Study/UoA-STATS-769$ scp bole001@sc-cer00014-04.its.auckland.ac.nz:/course/Labs/Lab02/*.csv .
+```
+
+From there RStudio was used on the local machine to develop the report. So that the RMD for the report will run anywhere that the files are hosted, a directory variable is used that informs the script were the directory containing the data files is. On the STATS 769 machine this variable is set as follows:
+
+```{}
+directory = '/course/Labs/Lab02/'
+```
+
+Whereas on the Windows 10 machine used to create the report, it was set to the local filesystem where the csv files for the lab were copied to. Code used to create the initial dataframe for the Trips data follows.
 
 ```{r trips data}
-# setwd("~/Source/UoA-STATS-769/Lab02")
-# Get the files names in the directory
-directory = "."
+#directory = '/course/Labs/Lab02/'
+directory = 'D:/Study/UoA-STATS-769/Lab02/'
 files.ls <- intersect(list.files(path=directory, pattern="trips"), list.files(path=directory, pattern="*.csv"))
 # First apply read.csv, then rbind
 trips.df = do.call(rbind, lapply(files.ls, function(x) read.csv(x, stringsAsFactors = FALSE)))
-```
-
-## Explore duration and distance
-
-Visualise the distance (predictor) and duration (response) features by generating a barplot of their respective values. Both variables appear to be right skewed.
-
-```{r bar-plots, echo=FALSE}
-# look at duration
-barplot(table(trips.df$Trip.Duration))
-barplot(table(trips.df$Trip.Distance))
 ```
 
 ## Add 'LongTrip' variable
@@ -47,6 +48,18 @@ Name the variable Trip.Duration.Logged and add to the end of the dataframe. Note
 
 ```{r}
 trips.df$Trip.Duration.Logged <- log(trips.df$Trip.Duration)
+```
+
+## Explore Trip.Duration, Trip.Duration, Trip.Duration.Logged and LongTrip variables 
+
+Visualise the Trip.Duration.Logged (what will be used as the predictor) and LongTrip (the response) features by generating a barplot of their respective values. The shape of the duration data are not changed much by logging it. There are about the same volume of LongTrips as there are not LongTrips - the distance of 1000 is a good place to split the data in this regard.  
+
+```{r bar-plots, echo=FALSE}
+# look at duration
+barplot(table(trips.df$Trip.Duration))
+barplot(table(trips.df$Trip.Duration.Logged))
+barplot(table(trips.df$LongTrip))
+plot(density(trips.df$Trip.Duration))
 ```
 
 ## Train/test split
