@@ -1,0 +1,148 @@
+
+# 769 Lab Report Template
+
+This document provides a (very) rough exemplar of the sort of report
+that should be submitted for each lab.  The report should NOT exceed
+10 pages (when printed at 100% scale).
+
+## Data Import 
+
+The data set consists of two large CSV files (~500MB) containing
+information about flights in the United States.
+These files are too large
+for us to deal with easily (until we cover Large Data later in the course),
+so we just worked with a sample of 10,000 rows from each file.
+
+We obtained those samples using Linux shell tools (because doing the 
+job in R would take too long and use too much memory).  We will learn
+about these tools in the "Linux Shell" topic.
+
+```{r}
+system("head -1 /course/ASADataExpo2009/Data/1988.csv | tee 1988.csv > 1989.csv")
+system("shuf -n10000 /course/ASADataExpo2009/Data/1988.csv >> 1988.csv")
+system("shuf -n10000 /course/ASADataExpo2009/Data/1989.csv >> 1989.csv")
+```
+
+Once we have the samples, reading CSV files into R is very easy.
+
+```{r}
+flights1988 <- read.csv("1988.csv")
+flights1989 <- read.csv("1989.csv")
+```
+
+It is also easy to combine the resulting data frames into a single
+data frame.
+
+```{r}
+flights <- rbind(flights1988, flights1989)
+dim(flights)
+```
+
+For most topics in the first half of the course, this Data Import section
+will be the largest part of the report (so the "Analysis" sections
+will have to be quite brief).
+
+## Exploratory Analysis
+
+It will usually be useful to calculate some basic summaries and
+draw some basic plots of the data set, especially the first time
+we work with a data set.
+
+This table and plot show that the number of flights per month is quite even.
+
+```{r}
+table(flights$Month)
+barplot(table(flights$Month))
+```
+
+This plot shows a weak suggestion that (the log of)
+departure delays are greater 
+later in the day.
+
+```{r}
+plot(flights$DepTime, flights$DepDelay, log="y")
+
+```
+
+## Modelling
+
+We will (usually) build a predictive model for each lab, though the
+quality of the model will not (usually) be the focus of the lab.
+Lab work will be more focused on importing and tidying and transforming
+the data, and dealing with issue like data size and speed of
+computation.
+
+We will (usually) work with a training set of data to build a model
+and then assess the model on a test set.  Here we use 1988 data
+for training and 1989 data for testing.
+
+Modelling will often require further transformation and restructuring
+of the data.  In this case, we log the departure delays, which means
+we must discard all non-positive delays.
+
+```{r}
+trainDelay <- log(flights1988$DepDelay)
+trainSubset <- is.finite(trainDelay)
+yTrain <- trainDelay[trainSubset]
+xTrain <- flights1988$DepTime[trainSubset]
+```
+
+We consider two models:  a simple constant mean delay and a linear
+regression of delay against departure time.
+
+```{r}
+fitMean <- mean(yTrain, na.rm=TRUE)
+fitLM <- lm(y ~ x, data.frame(y=yTrain, x=xTrain))
+```
+
+It may be useful to draw plots to show the fitted models.
+In this case, there is only a quite weak signal and lots of
+unexplained variability.
+
+```{r}
+plot(xTrain, yTrain)
+abline(h=fitMean, col="red", lwd=3)
+abline(fitLM, col="blue", lwd=3)
+```
+
+We assess the model on the test set;  because this is a linear regression
+we calculate the Root Mean Square Error.  The test set must be
+logged to correspond to the training set.
+
+```{r}
+testDelay <- log(flights1989$DepDelay)
+testSubset <- is.finite(testDelay)
+yTest <- testDelay[testSubset]
+xTest <- flights1989$DepTime[testSubset]
+predMean <- rep(fitMean, length(yTest))
+predLM <- predict(fitLM, data.frame(x=xTest))
+```
+The linear regression is a slightly better predictor than a simple
+constant mean.
+
+```{r}
+RMSE <- function(m, o) {
+    sqrt(mean((m - o)^2))
+}
+RMSE(predMean, yTest)
+RMSE(predLM, yTest)
+```
+
+Again, a plot may help to show the performance of the models on the 
+test set.
+
+```{r}
+plot(xTest, yTest)
+abline(h=predMean, col="red", lwd=3)
+abline(fitLM, col="blue", lwd=3)
+```
+
+## Conclusion
+
+We will (usually) want to summarise the results of our modelling.
+In this case, we have a pretty poor model, but we have still done better
+than just taking a simple average.
+
+We will also (usually) want to reflect (briefly) on the course topic
+that the lab is built around (e.g., Linux shell tools);  what have
+we used, why, and how successful were we?

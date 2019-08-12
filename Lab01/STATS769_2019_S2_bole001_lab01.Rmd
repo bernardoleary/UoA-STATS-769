@@ -74,8 +74,8 @@ fit_mean = mean(y_train)
 fit_lm <- lm(y ~ x, data.frame(y=y_train, x=x_train))
 
 # test results
-y_test <- test_set$distance
-x_test <- test_set$duration
+y_test <- test_set$duration
+x_test <- test_set$distance
 
 # make a vector that is populated with the fit_mean
 pred_mean <- rep(fit_mean, length(y_test))

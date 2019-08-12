@@ -1,7 +1,7 @@
 ---
-title: "STATS 769 - Lab 01 - bole001"
+title: "STATS 769 - Lab 02 - bole001"
 author: "Bernard O'Leary"
-date: "5 August 2019"
+date: "12 August 2019"
 output: word_document
 ---
 
@@ -15,11 +15,21 @@ knitr::opts_chunk$set(echo = TRUE)
 Date format is CSV (Comma Separated Values), reading into R using the read.csv function.
 
 ```{r trips data}
-# import the data
-trips201807 <- read.csv("trips-2018-7.csv")
-trips201808 <- read.csv("trips-2018-8.csv")
-trips201809 <- read.csv("trips-2018-9.csv")
-trips <- rbind(trips201807, trips201808, trips201809)
+# setwd("~/Source/UoA-STATS-769/Lab02")
+# Get the files names in the directory
+directory = "."
+files.ls <- intersect(list.files(path=directory, pattern="trips"), list.files(path=directory, pattern="*.csv"))
+# First apply read.csv, then rbind
+trips.df = do.call(rbind, lapply(files.ls, function(x) read.csv(x, stringsAsFactors = FALSE)))
+```
+
+## Get rid of non-positive and non-finite values in duration and distance 
+
+```{r}
+trips.df <- subset(trips.df, trips.df$Trip.Duration > 0)
+trips.df <- subset(trips.df, trips.df$Trip.Distance > 0)
+trips.df <- subset(trips.df, is.finite(trips.df$Trip.Duration))
+trips.df <- subset(trips.df, is.finite(trips.df$Trip.Distance))
 ```
 
 ## Explore duration and distance
@@ -28,8 +38,8 @@ Visualise the distance (predictor) and duration (response) features by generatin
 
 ```{r bar-plots, echo=FALSE}
 # look at duration
-barplot(table(trips$duration))
-barplot(table(trips$distance))
+barplot(table(trips.df$Trip.Duration))
+barplot(table(trips.df$Trip.Distance))
 ```
 
 ## Explore duration and density further
@@ -38,10 +48,10 @@ To get a better understanding of the distance feature we can plot the logged out
 
 ```{r density-plots, echo=FALSE}
 # look at distribution of distance 
-plot(density(trips$distance))
+plot(density(trips.df$Trip.Distance))
 
 # look at the logged distribution to get a better perspective
-plot(density(log(trips$distance)))
+plot(density(log(trips.df$Trip.Distance)))
 ```
 
 ## Train model
