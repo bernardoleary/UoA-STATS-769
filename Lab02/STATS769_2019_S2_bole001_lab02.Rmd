@@ -12,13 +12,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Read in data and Linux commands 
 
-Date format is CSV (Comma Separated Values), reading into R using the read.csv function. The machine that was used to create the report is a Windows 10 machine that has an Ubuntu Bash shell built into it as part of the WSL implementation (https://docs.microsoft.com/en-us/windows/wsl/install-win10). Once access was gained to the STATS 769 machines, the files were copied to the WIndows 10 machine used to create the report using the scp command, as follows:
+Data format is CSV (Comma Separated Values), reading into R using the read.csv function. Becuase there are a large number of files an alternative approach has been taken, to list all files in the Lab02 directory accroding to the file structure we are looking for ("trips*.csv") and then pick up each file and add to a dataframe (called "trips.df").
+
+The machine that was used to create the report is a Microsoft Windows 10 machine that has an Ubuntu Linux Bash shell built into it as part of the WSL (Windows Subsystem for Linux) feature that is an optional feature of the Windows 10 OS (https://docs.microsoft.com/en-us/windows/wsl/install-win10). Once access was gained to the STATS 769 Linux machines, the files were copied to the Windows 10 machine used to create the report using the following scp command:
 
 ```{}
 bernardo@PKS10198:/mnt/d/Study/UoA-STATS-769$ scp bole001@sc-cer00014-04.its.auckland.ac.nz:/course/Labs/Lab02/*.csv .
 ```
 
-From there RStudio was used on the local machine to develop the report. So that the RMD for the report will run anywhere that the files are hosted, a directory variable is used that informs the script were the directory containing the data files is. On the STATS 769 machine this variable is set as follows:
+From there RStudio was used on the local machine to develop the report. So that the RMD for the report will run anywhere on the STATS 769 Linux machines, a "directory" variable is used that holds the value of the directory that the trips files are in. The script uses this variable to locate the directory containing the data files. For the STATS 769 machine this variable is set as follows:
 
 ```{}
 directory = '/course/Labs/Lab02/'
@@ -27,8 +29,10 @@ directory = '/course/Labs/Lab02/'
 Whereas on the Windows 10 machine used to create the report, it was set to the local filesystem where the csv files for the lab were copied to. Code used to create the initial dataframe for the Trips data follows.
 
 ```{r trips data}
-#directory = '/course/Labs/Lab02/'
-directory = 'D:/Study/UoA-STATS-769/Lab02/'
+# When the RMD for the lab is submitted the following value will be uncommented
+directory = '/course/Labs/Lab02/'
+# When the RMD for the lab is submitted the following value will be commented
+#directory = 'D:/Study/UoA-STATS-769/Lab02/'
 files.ls <- intersect(list.files(path=directory, pattern="trips"), list.files(path=directory, pattern="*.csv"))
 # First apply read.csv, then rbind
 trips.df = do.call(rbind, lapply(files.ls, function(x) read.csv(x, stringsAsFactors = FALSE)))
@@ -52,14 +56,20 @@ trips.df$Trip.Duration.Logged <- log(trips.df$Trip.Duration)
 
 ## Explore Trip.Duration, Trip.Duration, Trip.Duration.Logged and LongTrip variables 
 
-Visualise the Trip.Duration.Logged (what will be used as the predictor) and LongTrip (the response) features by generating a barplot of their respective values. The shape of the duration data are not changed much by logging it. There are about the same volume of LongTrips as there are not LongTrips - the distance of 1000 is a good place to split the data in this regard.  
+Visualise the Trip.Duration.Logged (what will be used as the predictor) and LongTrip (the response) features by generating a barplot of their respective values. The shape of the duration data are not changed much by logging it. 
+
+There are about the same volume of LongTrips as there are not LongTrips - the distance of 1000 is a good place to split the data in this regard.  
+
+THe Long Trip vs Duration plots reveal that as would be expected, trips with longer distance also have a longer duration in general. 
 
 ```{r bar-plots, echo=FALSE}
 # look at duration
-barplot(table(trips.df$Trip.Duration))
-barplot(table(trips.df$Trip.Duration.Logged))
-barplot(table(trips.df$LongTrip))
-plot(density(trips.df$Trip.Duration))
+barplot(table(trips.df$Trip.Duration), main="Duration")
+barplot(table(trips.df$Trip.Duration.Logged), main="Duration (Logged)")
+barplot(table(trips.df$LongTrip), main="Long Trip (TRUE/FALSE)")
+plot(density(trips.df$Trip.Duration), main="Duration (Distribution Density)")
+plot(trips.df$LongTrip, trips.df$Trip.Duration, type="p", main="Long Trip vs Duration") 
+plot(trips.df$LongTrip, trips.df$Trip.Duration.Logged, type="p", main="Long Trip vs Duration (Logged)") 
 ```
 
 ## Train/test split
@@ -158,7 +168,7 @@ Plot y_test vs x_test and overlay the average with random error model and our de
 
 ```{r prediction-plot, echo=FALSE}
 # plot the results
-plot(x_test, y_test)
+plot(x_test, y_test, main="Model vs Average with Random Error (Test Set)")
 abline(h=pred_mean, col="red", lwd=3)
 abline(fit_glm, col="blue", lwd=3)
 ```
