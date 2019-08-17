@@ -1,0 +1,17 @@
+Column Name,Description,Type
+ID,A unique ID for each trip. This is an arbitrary sequence and is not derived from any identifier used by the service provider.,Plain Text
+Device ID,A unique ID for the device used to complete the trip. This is an arbitrary sequence and is not derived from any identifier used by the service provider.,Plain Text
+Vehicle Type,Vehicle type (bicycle or scooter),Plain Text
+Trip Duration,"Trip duration, in seconds",Number
+Trip Distance,"Trip distance, in meters",Number
+Start Time,"The datetime at which the trip started, in local time (US/Central)",Date & Time
+End Time,"The datetime at which the trip ended, in local time (US/Central)",Date & Time
+Modified Date,"The datetime at which the record was last modified (typically the date the data was extracted/loaded from the data provider), in local time (US/Central)",Date & Time
+Month,"The month # the trip occurred, in local time (US/Central), where 1 = January, etc.",Number
+Hour,"The hour of the day during which trip occurred, in local time (US/Central).",Number
+Day of Week,"The day of the week on which the trip occurred, in local time (US/Central), where Sunday = 0, and so on.",Number
+Council District (Start),The council district in which the trip started.,Plain Text
+Council District (End),The council district in which the trip ended.,Plain Text
+Year,,Number
+Census Tract Start,The GEOID of the 2010 US Census Tract in which the trip originated.,Plain Text
+Census Tract End,The GEOID of the 2010 US Census Tract in which the trip ended.,Plain Tex

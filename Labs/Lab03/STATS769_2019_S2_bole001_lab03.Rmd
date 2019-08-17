@@ -1,0 +1,32 @@
+---
+title: "STATS 769 - Lab 03 - bole001"
+author: "Bernard O'Leary"
+date: "18 August 2019"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Read in data and Linux commands 
+
+Data format is CSV (Comma Separated Values), reading into R using the read.csv function. Becuase there are a large number of files an alternative approach has been taken, to list all files in the Lab02 directory accroding to the file structure we are looking for ("trips*.csv") and then pick up each file and add to a dataframe (called "trips.df").
+
+The machine that was used to create the report is a Microsoft Windows 10 machine that has an Ubuntu Linux Bash shell built into it as part of the WSL (Windows Subsystem for Linux) feature that is an optional feature of the Windows 10 OS (https://docs.microsoft.com/en-us/windows/wsl/install-win10). Once access was gained to the STATS 769 Linux machines, the files were copied to the Windows 10 machine used to create the report using the following scp command:
+
+```{}
+bernardo@PKS10198:/mnt/d/Study/UoA-STATS-769$ scp bole001@sc-cer00014-04.its.auckland.ac.nz:/course/Labs/Lab02/*.csv .
+```
+
+Whereas on the Windows 10 machine used to create the report, it was set to the local filesystem where the csv files for the lab were copied to. Code used to create the initial dataframe for the scooter Trips data follows.
+
+```{r trips data}
+# Files are already in our local directory
+directory = '.'
+scooter_files.ls <- intersect(list.files(path=directory, pattern="scooter"), list.files(path=directory, pattern="*.csv"))
+# First apply read.csv, then rbind
+scooter_trips.df = do.call(rbind, lapply(scooter_files.ls, function(x) read.csv(x, stringsAsFactors = FALSE)))
+```
+

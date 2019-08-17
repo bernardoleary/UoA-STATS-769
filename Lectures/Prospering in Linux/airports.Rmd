@@ -1,0 +1,21 @@
+
+# Flights Within the USA
+
+## Exploratory analysis
+
+Turns out that there are some flights to airports outside of 
+the USA.
+
+```{r}
+airports <- read.csv("airports.csv")
+table(airports$country)
+```
+
+## Appendix
+
+We can run shell commands within an R Markdown document with
+the R system() function.
+
+```{r}
+system("ls", intern=TRUE)
+```
