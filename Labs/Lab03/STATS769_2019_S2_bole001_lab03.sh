@@ -13,4 +13,12 @@ for i in trips*.csv
 do
     head -1 $i > "scooter-"$i
     grep "scooter" $i >> "scooter-"$i    
+    echo "$i created"
 done
+
+# Run the R code for the lab
+echo "Running RMD script"
+Rscript -e 'library("rmarkdown"); render("STATS769_2019_S2_bole001_lab03.Rmd")'
+
+# Exit
+echo "Done"
