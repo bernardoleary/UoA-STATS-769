@@ -27,6 +27,80 @@ Whereas on the Windows 10 machine used to create the report, it was set to the l
 directory = '.'
 scooter_files.ls <- intersect(list.files(path=directory, pattern="scooter"), list.files(path=directory, pattern="*.csv"))
 # First apply read.csv, then rbind
-scooter_trips.df = do.call(rbind, lapply(scooter_files.ls, function(x) read.csv(x, stringsAsFactors = FALSE)))
+scooter_trips.df = do.call(rbind, lapply(scooter_files.ls, function(x) read.csv(x, stringsAsFactors = FALSE))) 
 ```
+
+## Get rid of non-positive and non-finite values in duration and distance 
+
+Remove from the entire dataset.
+
+```{r}
+scooter_trips.df <- subset(scooter_trips.df, scooter_trips.df$Trip.Duration > 0)
+scooter_trips.df <- subset(scooter_trips.df, scooter_trips.df$Trip.Distance > 0)
+scooter_trips.df <- subset(scooter_trips.df, is.finite(scooter_trips.df$Trip.Duration))
+scooter_trips.df <- subset(scooter_trips.df, is.finite(scooter_trips.df$Trip.Distance))
+```
+
+## Add logged duration and distance variables
+
+Name the variables Trip.Duration.Logged and Trip.Distance.Logged and add to the end of the dataframe. Note that because the data are not cleansed by this point NaNs are produced here.
+
+```{r}
+scooter_trips.df$Trip.Duration.Logged <- log(scooter_trips.df$Trip.Duration)
+scooter_trips.df$Trip.Distance.Logged <- log(scooter_trips.df$Trip.Distance)
+```
+
+
+## Perform 10-fold cross validation
+
+```{r}
+# Define RMSE function
+RMSE <- function(m, o) {
+    sqrt(mean((m - o)^2))
+}
+
+# Randomly shuffle the data
+scooter_trips.df <- scooter_trips.df[sample(nrow(scooter_trips.df)),]
+
+# Create 10 equally size folds
+folds <- cut(seq(1,nrow(scooter_trips.df)),breaks=10,labels=FALSE)
+
+# Perform 10 fold cross validation
+for(i in 1:10){
+    
+  # Segement your data by fold using the which() function 
+  test_indexes <- which(folds==i,arr.ind=TRUE)
+  test_set <- scooter_trips.df[test_indexes, ]
+  training_set <- scooter_trips.df[-test_indexes, ]
+  
+  # Make the model
+  y_train = training_set$Trip.Duration
+  x_train = training_set$Trip.Distance
+  fit_mean = mean(y_train)
+  fit_lm <- lm(y ~ x, data.frame(y=y_train, x=x_train))
+  
+  # Test results
+  y_test <- test_set$Trip.Duration
+  x_test <- test_set$Trip.Distance
+  
+  # Make a vector that is populated with the fit_mean
+  pred_mean <- rep(fit_mean, length(y_test))
+  
+  # Get a vector of predictions based on test data
+  pred_lm <- predict(fit_lm, data.frame(x=x_test))
+
+  # get the RMSE
+  print(i)
+  print(RMSE(pred_mean, y_test))
+  print(RMSE(pred_lm, y_test))
+}
+```
+
+
+
+
+
+
+
+
 
