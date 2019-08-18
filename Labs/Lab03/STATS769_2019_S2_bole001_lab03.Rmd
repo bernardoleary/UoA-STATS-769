@@ -54,13 +54,15 @@ scooter_trips.df$Trip.Distance.Logged <- log(scooter_trips.df$Trip.Distance)
 ## Perform 10-fold cross validation
 
 ```{r}
-# Define RMSE function
-RMSE <- function(m, o) {
-    sqrt(mean((m - o)^2))
+# Define MSE function
+MSE <- function(m, o) {
+    mean((m - o)^2)
 }
 
 # Randomly shuffle the data
 scooter_trips.df <- scooter_trips.df[sample(nrow(scooter_trips.df)),]
+
+MSE_for_fold.df <- data.frame(fold=integer(),pred_mean=double(),pred_lm=double()) 
 
 # Create 10 equally size folds
 folds <- cut(seq(1,nrow(scooter_trips.df)),breaks=10,labels=FALSE)
@@ -74,14 +76,14 @@ for(i in 1:10){
   training_set <- scooter_trips.df[-test_indexes, ]
   
   # Make the model
-  y_train = training_set$Trip.Duration
-  x_train = training_set$Trip.Distance
+  y_train = training_set$Trip.Duration.Logged
+  x_train = training_set$Trip.Distance.Logged
   fit_mean = mean(y_train)
   fit_lm <- lm(y ~ x, data.frame(y=y_train, x=x_train))
   
   # Test results
-  y_test <- test_set$Trip.Duration
-  x_test <- test_set$Trip.Distance
+  y_test <- test_set$Trip.Duration.Logged
+  x_test <- test_set$Trip.Distance.Logged
   
   # Make a vector that is populated with the fit_mean
   pred_mean <- rep(fit_mean, length(y_test))
@@ -90,13 +92,31 @@ for(i in 1:10){
   pred_lm <- predict(fit_lm, data.frame(x=x_test))
 
   # get the RMSE
-  print(i)
-  print(RMSE(pred_mean, y_test))
-  print(RMSE(pred_lm, y_test))
+  MSE_for_fold.df[i,] = c(i,MSE(pred_mean, y_test),MSE(pred_lm, y_test))
 }
+
+# Print the result
+MSE_for_fold.df
+
+# Print the average MSE across all folded data
+mean(MSE_for_fold.df$pred_mean)
+mean(MSE_for_fold.df$pred_lm)
 ```
 
+## Visualise the linear model
 
+Plot scooter_trips.df$Trip.Duration vs scooter_trips.df$Trip.Distance and overlay the average with random error model and our derived logistic regression model. This is to help us visualise the data and the derived model as it applies to the test dataset.
+
+```{r prediction-plot, echo=FALSE}
+# Make the model
+fit_mean = mean(scooter_trips.df$Trip.Duration.Logged)
+fit_lm <- lm(y ~ x, data.frame(y=scooter_trips.df$Trip.Duration.Logged, x=scooter_trips.df$Trip.Distance.Logged))
+
+# plot the results
+plot(scooter_trips.df$Trip.Distance.Logged, scooter_trips.df$Trip.Duration.Logged, main="Linear Model vs Average with Random Error (All Data)")
+abline(h=pred_mean, col="red", lwd=3)
+abline(fit_lm, col="blue", lwd=3)
+```
 
 
 
