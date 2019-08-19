@@ -17,10 +17,10 @@ The machine that was used to create the report is a Microsoft Windows 10 machine
 
 ```{}
 bernardo@PKS10198:/mnt/d/Study/UoA-STATS-769$ \
-scp bole001@sc-cer00014-04.its.auckland.ac.nz:/course/Labs/Lab02/*.csv .
+  scp bole001@sc-cer00014-04.its.auckland.ac.nz:/course/Labs/Lab02/*.csv .
 ```
 
-A shell script called "STATS769_2019_S2_bole001_lab03.sh" was created to import the data and to filter out the records that contained the word "scooter", then create a new file for each corresponding original file prefixed with the word scooter, and push those reocrds into those files. The code in the scheel script is as follows:
+A shell script called "STATS769_2019_S2_bole001_lab03.sh" was created to import the data and to filter out the records that contained the word "scooter", then create a new file for each corresponding original file prefixed with the word scooter, and push those reocrds into those files. The shell script also counts and prints the number of lines that contain the word "bicycle". The code in the shell script is as follows:
 
 ```{}
 #!/bin/bash
@@ -234,3 +234,13 @@ abline(fit_lm2, col="blue", lwd=3)
 
 Our model has reduced the variability that we see by simply taking the average model with random error significantly - on average it decreases the variablity by about 60 percent. This is a good model as it explains more of the variability in the data than the average model with random error. The model would be useful for prediction. Both the linear and the polynomial models exhibit the same level of accuracy - i.e. no advantage is gained by adding a polynomial term.
 
+## Appendix: Makefile structure
+
+A Makefile was used to run the shell script (described above) which drives the initial data ingestion procedure. The Makefile is expectued simply by running the command "make" in the directory that has the shell script file and the Rmd file in it. The output of the procedure is a PDF file. The Makefile is only run if the RMD file is newer that the PDF file (indicating that the report would change if the RMD were re-run). The Makefile code is as follows:
+
+```{}
+target : STATS769_2019_S2_bole001_lab03.sh STATS769_2019_S2_bole001_lab03.Rmd STATS769_2019_S2_bole001_lab03.pdf
+	if [ STATS769_2019_S2_bole001_lab03.Rmd -nt STATS769_2019_S2_bole001_lab03.pdf ]; then \
+		bash STATS769_2019_S2_bole001_lab03.sh; \
+	fi
+```
