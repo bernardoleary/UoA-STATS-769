@@ -49,6 +49,7 @@ Rscript -e 'library("rmarkdown"); render("STATS769_2019_S2_bole001_lab03.Rmd")'
 echo "Done"
 ```
 
+
 Whereas on the Windows 10 machine used to create the report, it was set to the local filesystem where the csv files for the lab were copied to. Code used to create the initial dataframe for the scooter Trips data follows.
 
 ```{r trips data}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+  <row>
+    <row _uuid="00000000-0000-0000-AF9A-401551B08E58">
+      <month>Jan</month>
+      <pets_adopted>129</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-F7B9-E37345BC66E7">
+      <month>Mar</month>
+      <pets_adopted>126</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-ADAB-310B0A2E551C">
+      <month>Feb</month>
+      <pets_adopted>151</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-D539-79AF5550719D">
+      <month>Apr</month>
+      <pets_adopted>128</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-0CF1-7C7A0DE7534B">
+      <month>May</month>
+      <pets_adopted>143</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-E351-E9042A84A1C3">
+      <month>Jun</month>
+      <pets_adopted>200</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-E295-FD24F05F0D8F">
+      <month>Jul</month>
+      <pets_adopted>285</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-94BB-9A5C0CD0C388">
+      <month>Aug</month>
+      <pets_adopted>288</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-525A-60D44732D114">
+      <month>Sep</month>
+      <pets_adopted>247</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-73D8-DDE8C73DFE63">
+      <month>Nov</month>
+      <pets_adopted>253</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-914C-90190B55AB89">
+      <month>Oct</month>
+      <pets_adopted>238</pets_adopted>
+    </row>
+    <row _uuid="00000000-0000-0000-927F-557236A24B98">
+      <month>Dec</month>
+      <pets_adopted>279</pets_adopted>
+    </row>
+  </row>
+</response>

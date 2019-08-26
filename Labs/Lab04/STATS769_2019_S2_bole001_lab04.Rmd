@@ -1,0 +1,29 @@
+---
+title: "STATS 769 - Lab 04 - bole001"
+author: "Bernard O'Leary"
+date: "26 August 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Get the JSON data
+
+```{r}
+library(jsonlite)
+json_file = "D:/Study/UoA-STATS-769/Labs/Lab04/JSON/trips-1.json"
+json <- fromJSON(readLines(json_file))
+json
+```
+
+## Get the MongoDB data
+
+```{r}
+library(mongolite)
+mongo_db <- mongo("trips")
+mongo_db
+mongo_db$find(limit=3)
+mongo_db$find(query='{"vehicle_type": "scooter"}')
+```
