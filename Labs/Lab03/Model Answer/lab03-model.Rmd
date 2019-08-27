@@ -1,0 +1,184 @@
+
+# STATS 769 Lab 03
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(comment=NA)
+```
+
+## The data
+
+The data are trips on electric scooters and bikes in Austin, Texas.
+The data came in the form of eleven CSV files, one per month (form
+April 2018 to February 2019).  Each file contains 5000 trips.
+
+## Linux processing
+
+The following shell code counts the number of bicycle trips in each CSV
+file.  We loop through each CSV file, use `grep` to find lines that
+contain the word
+"bicycle" and pipe the result to `wc` to count the number of such lines.
+
+```{bash}
+for i in /course/Labs/Lab02/trips*.csv
+do
+    echo $i
+    grep bicycle $i | wc -l
+done
+```
+
+An alternative solution that I saw somebody doing in the lab, which
+is much nicer:
+
+```{bash}
+grep -c bicycle /course/Labs/Lab02/trips*.csv
+```
+
+The next shell code extracts just the scooter trips from each CSV file.
+Again, we loop through the CSV files, use `basename` to get the CSV
+file name without its path, 
+use `head` to pull the first row (column names) off the CSV
+and redirect the result to a new CSV file prefixed with "scooter-".
+Then we use `grep` to extract the lines containing the word
+"scooter" and append those to the "scooter-" file.
+
+```{bash}
+for i in /course/Labs/Lab02/trips*.csv
+do
+    file=$(basename $i)
+    head -1 $i > scooter-$file
+    grep scooter $i >> scooter-$file
+done
+```
+
+## R processing
+
+The following code reads the scooter CSV files into R and combines them to
+create a single data frame.
+
+```{r}
+years <- rep(2018:2019, c(9, 2))
+months <- c(4:12, 1:2)
+filenames <- paste0("scooter-trips-", years, "-", months, ".csv")
+trips <- do.call(rbind, lapply(filenames, read.csv))
+```
+
+We exclude non-positive durations and distances and log both variables.
+
+```{r}
+modelTrips <- subset(trips, 
+                     Trip.Duration > 0 & Trip.Distance > 0)
+tripDuration <- log(modelTrips$Trip.Duration)
+tripDistance <- log(modelTrips$Trip.Distance)
+```
+
+## K-fold cross-validation
+
+The following code repeats the sequence 1 to 10 until the result
+is as long as the number of trips.  We then sample that repeated
+sequence to get a randomised set of labels where the number of times
+each 
+label occurs is as equal as possible.
+
+```{r}
+## Define 10 splits
+labels <- rep(1:10, length.out=nrow(modelTrips))
+groups <- sample(labels)
+```
+
+```{r echo=FALSE}
+stopifnot(all(table(labels) == table(groups)))
+```
+
+The `mse()` function splits the data into test and training sets
+using a label between 1 and 10.  It then uses the training set
+to fit a model relating 
+trip duration to trip distance based on the
+provided formula, generates predictions for the test set,
+and calculates the Mean Square Error for the test set.
+
+```{r}
+mse <- function(i, formula) {
+    testSet <- groups == i
+    trainSet <- groups != i
+    fit <- lm(formula, 
+              data.frame(x=tripDistance[trainSet], y=tripDuration[trainSet]))
+    pred <- predict(fit, data.frame(x=tripDistance[testSet]))
+    mean((pred - tripDuration[testSet])^2)
+}   
+```
+
+## Choosing a model
+
+The following code evaluates a simple linear regression model
+using the formula `y ~ x`.
+We perform cross-validation by calling `mse()` for i from 1 to 10, then
+average the resulting MSE values.
+
+```{r}
+mean(sapply(1:10, mse, y ~ x))
+```
+
+The following code evaluates a polynomial regression model
+by cross-validation using the formula `y ~ x + I(x^2)`.
+
+```{r}
+mean(sapply(1:10, mse, y ~ x + I(x^2)))
+```
+
+The MSE is lower if we add a squared term to the linear model.
+
+## The final model
+
+We fit both models to the full data and produce a plot to show
+the predictions of both models against the raw data.
+This confirms that the polynomial regression model captures the
+trend in the data better than the simple linear regression model,
+although the predictions increasing again at very small distances
+is a bit of a concern.
+
+```{r}
+lmFit <- lm(y ~ x, data.frame(x=tripDistance, y=tripDuration))
+polyFit <- lm(y ~ x + I(x^2), data.frame(x=tripDistance, y=tripDuration))
+polyPred <- predict(polyFit)
+plot(tripDistance, tripDuration, pch=16, col=rgb(0,0,0,.1))
+abline(lmFit, col="blue")
+lines(sort(tripDistance), polyPred[order(tripDistance)], col="red")
+```
+
+## The Makefile
+
+The Makefile below generates an HTML file from the R Markdown file
+when we type `make` (because there is only one targe)
+and  does nothing if the HTML file is newer than
+the R Markdown file (because the Rmd file is a dependency of the
+HTML file target).
+
+```{r echo=FALSE}
+cat(readLines("Makefile"), sep="\n")
+```
+
+## Conclusion
+
+The data were in a simple CSV format.  We used shell tools 
+(`grep` and `wc`) to 
+show that there were only a couple of hundred bicycle trips
+(out of 15,000 trips overall), and we just
+extracted the scooter trips for analysis
+(using `grep`, `head`, and output redirection).  Reading the CSVs
+of scooter trips was straightforward with the `read.csv()` function.
+
+We used k-fold cross-validation (k = 10) to measure test error 
+for both a simple linear regression of trip duration on trip distance
+and a polynomial regression that added a squared trip distance term.
+The polynomial regression performed better (produced a lower test error).
+
+A plot of the two models shows that the non-linear polynomial model 
+matches the pattern in the data better, although the prediction of an
+increase in trip duration as trip distance *decreases* (for very
+short trips) might be questioned.
+
+The final report was generated on Linux using a Makefile, which allowed
+us to process the R Markdown file to an HTML file by simply typing
+`make`.
+
+

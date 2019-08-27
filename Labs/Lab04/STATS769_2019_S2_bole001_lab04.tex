@@ -1,0 +1,368 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={STATS 769 - Lab 04 - bole001},
+            pdfauthor={Bernard O'Leary},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{STATS 769 - Lab 04 - bole001}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Bernard O'Leary}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{26 August 2019}
+
+
+\begin{document}
+\maketitle
+
+\section{Describe the methods used to import the data to
+R.}\label{describe-the-methods-used-to-import-the-data-to-r.}
+
+\subsection{JSON data}\label{json-data}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(jsonlite)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'jsonlite' was built under R version 3.6.1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{readJsonFileIntoDataframe <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(file_name) \{}
+  \CommentTok{# Read in data}
+  \KeywordTok{fromJSON}\NormalTok{(}\KeywordTok{readLines}\NormalTok{(file_name))}
+\NormalTok{\}}
+
+
+\NormalTok{file_numbers <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{)}
+\NormalTok{file_names <-}\StringTok{ }\KeywordTok{paste0}\NormalTok{(}\StringTok{"trips-"}\NormalTok{, file_numbers, }\StringTok{".json"}\NormalTok{)}
+\CommentTok{# At home}
+\NormalTok{files <-}\StringTok{ }\KeywordTok{file.path}\NormalTok{(}\StringTok{"./JSON"}\NormalTok{, file_names)}
+\CommentTok{# At uni}
+\CommentTok{#files <- file.path("/course/Labs/Lab04/JSON", filenames)}
+\NormalTok{json_data <-}\StringTok{ }\KeywordTok{do.call}\NormalTok{(rbind, }\KeywordTok{lapply}\NormalTok{(files, readJsonFileIntoDataframe))}
+\NormalTok{json_data <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(json_data, year }\OperatorTok{==}\StringTok{ "2018"} \OperatorTok{&}\StringTok{ }\NormalTok{vehicle_type }\OperatorTok{==}\StringTok{ "scooter"}\NormalTok{, }\DataTypeTok{select =} \KeywordTok{c}\NormalTok{(}\StringTok{"trip_duration"}\NormalTok{, }\StringTok{"trip_distance"}\NormalTok{))}
+\KeywordTok{head}\NormalTok{(json_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   trip_duration trip_distance
+## 1           358           915
+## 2           226           839
+## 3           324          1206
+## 4          1096             0
+## 5           408          1144
+## 6          1094          2631
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(json_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 98817     2
+\end{verbatim}
+
+\subsection{MongoDB data}\label{mongodb-data}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(mongolite)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'mongolite' was built under R version 3.6.1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# At home}
+\NormalTok{mongo_db <-}\StringTok{ }\KeywordTok{mongo}\NormalTok{(}\StringTok{"trips"}\NormalTok{, }\DataTypeTok{url =} \StringTok{"mongodb://localhost:27017/local"}\NormalTok{)}
+\CommentTok{# At uni}
+\CommentTok{#mongo_db <- mongo("trips")}
+\NormalTok{mongo_db_data <-}\StringTok{ }\NormalTok{mongo_db}\OperatorTok{$}\KeywordTok{find}\NormalTok{(}
+  \DataTypeTok{query =} \StringTok{'\{"vehicle_type": "scooter", "year": "2018"\}'}\NormalTok{,}
+  \DataTypeTok{fields =} \StringTok{'\{"trip_duration": true, "trip_distance": true, "_id": false\}'}
+\NormalTok{)}
+\KeywordTok{head}\NormalTok{(mongo_db_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   trip_duration trip_distance
+## 1           358           915
+## 2           226           839
+## 3           324          1206
+## 4          1096             0
+## 5           408          1144
+## 6          1094          2631
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(mongo_db_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 98817     2
+\end{verbatim}
+
+\subsection{XML data}\label{xml-data}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(xml2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'xml2' was built under R version 3.6.1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{readXmlFileIntoDataframe <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(file_name) \{}
+  \CommentTok{# Read in data}
+\NormalTok{  xml_data <-}\StringTok{ }\KeywordTok{read_xml}\NormalTok{(file_name)}
+\NormalTok{  trips <-}\StringTok{ }\KeywordTok{xml_find_all}\NormalTok{(xml_data, }\StringTok{"//row[vehicle_type = 'scooter'][year = 2018]"}\NormalTok{)}
+\NormalTok{  trip_distance <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{xml_text}\NormalTok{(}\KeywordTok{xml_find_first}\NormalTok{(trips, }\StringTok{"trip_distance"}\NormalTok{)))}
+\NormalTok{  trip_duration <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{xml_text}\NormalTok{(}\KeywordTok{xml_find_first}\NormalTok{(trips, }\StringTok{"trip_duration"}\NormalTok{)))}
+  \KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(trip_duration, trip_distance))}
+\NormalTok{\}}
+
+
+\NormalTok{file_numbers <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{)}
+\NormalTok{file_names <-}\StringTok{ }\KeywordTok{paste0}\NormalTok{(}\StringTok{"trips-"}\NormalTok{, file_numbers, }\StringTok{".xml"}\NormalTok{)}
+\CommentTok{# At home}
+\NormalTok{files <-}\StringTok{ }\KeywordTok{file.path}\NormalTok{(}\StringTok{"./XML"}\NormalTok{, file_names)}
+\CommentTok{# At uni}
+\CommentTok{#files <- file.path("/course/Labs/Lab04/JSON", filenames)}
+\NormalTok{xml_data <-}\StringTok{ }\KeywordTok{do.call}\NormalTok{(rbind, }\KeywordTok{lapply}\NormalTok{(files, readXmlFileIntoDataframe))}
+\KeywordTok{head}\NormalTok{(xml_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   trip_duration trip_distance
+## 1           358           915
+## 2           226           839
+## 3           324          1206
+## 4          1096             0
+## 5           408          1144
+## 6          1094          2631
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(xml_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 98817     2
+\end{verbatim}
+
+\section{Model the data and derive estimates of test error for 5
+polynomial
+models.}\label{model-the-data-and-derive-estimates-of-test-error-for-5-polynomial-models.}
+
+Apply 10-fold cross-validation across 5 models with increasing
+polynomial terms up to the a fifth order polynomial. We find that the
+error begins to increase after the fourth order polynomial is added
+(i.e.~with a fifth order polynomial term, the error increases).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## Cleanse our data}
+\NormalTok{model_trips <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(xml_data, }
+\NormalTok{  trip_duration }\OperatorTok{>}\StringTok{ }\DecValTok{0} \OperatorTok{&}\StringTok{ }\NormalTok{trip_distance }\OperatorTok{>}\StringTok{ }\DecValTok{0}\NormalTok{)}
+\NormalTok{trip_duration <-}\StringTok{ }\KeywordTok{log}\NormalTok{(model_trips}\OperatorTok{$}\NormalTok{trip_duration)}
+\NormalTok{trip_distance <-}\StringTok{ }\KeywordTok{log}\NormalTok{(model_trips}\OperatorTok{$}\NormalTok{trip_distance)}
+\KeywordTok{head}\NormalTok{(model_trips)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   trip_duration trip_distance
+## 1           358           915
+## 2           226           839
+## 3           324          1206
+## 5           408          1144
+## 6          1094          2631
+## 7           705          1248
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## Define 10 splits}
+\NormalTok{labels <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, }\DataTypeTok{length.out=}\KeywordTok{nrow}\NormalTok{(model_trips))}
+\NormalTok{groups <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(labels)}
+
+\NormalTok{## Define our MSE function}
+\NormalTok{mse <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(i, formula) \{}
+\NormalTok{    test_set <-}\StringTok{ }\NormalTok{groups }\OperatorTok{==}\StringTok{ }\NormalTok{i}
+\NormalTok{    train_set <-}\StringTok{ }\NormalTok{groups }\OperatorTok{!=}\StringTok{ }\NormalTok{i}
+\NormalTok{    fit <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(formula, }
+              \KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{x=}\NormalTok{trip_distance[train_set], }\DataTypeTok{y=}\NormalTok{trip_duration[train_set]))}
+\NormalTok{    pred <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(fit, }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{x=}\NormalTok{trip_distance[test_set]))}
+    \KeywordTok{mean}\NormalTok{((pred }\OperatorTok{-}\StringTok{ }\NormalTok{trip_duration[test_set])}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\NormalTok{\}   }
+
+\NormalTok{## Train and test five models with increasing polynomial terms, look for lowest MSE value}
+\NormalTok{mse_polynomial_model <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\StringTok{"Order"}\NormalTok{ =}\StringTok{ "1"}\NormalTok{, }\StringTok{"MSE"}\NormalTok{ =}\StringTok{ }\KeywordTok{mean}\NormalTok{(}\KeywordTok{sapply}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, mse, y }\OperatorTok{~}\StringTok{ }\NormalTok{x)))}
+\NormalTok{mse_polynomial_model <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(mse_polynomial_model, }\KeywordTok{data.frame}\NormalTok{(}\StringTok{"Order"}\NormalTok{ =}\StringTok{ "2"}\NormalTok{, }\StringTok{"MSE"}\NormalTok{ =}\StringTok{ }\KeywordTok{mean}\NormalTok{(}\KeywordTok{sapply}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, mse, y }\OperatorTok{~}\StringTok{ }\NormalTok{x }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{2}\NormalTok{)))))}
+\NormalTok{mse_polynomial_model <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(mse_polynomial_model, }\KeywordTok{data.frame}\NormalTok{(}\StringTok{"Order"}\NormalTok{ =}\StringTok{ "3"}\NormalTok{, }\StringTok{"MSE"}\NormalTok{ =}\StringTok{ }\KeywordTok{mean}\NormalTok{(}\KeywordTok{sapply}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, mse, y }\OperatorTok{~}\StringTok{ }\NormalTok{x }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{3}\NormalTok{)))))}
+\NormalTok{mse_polynomial_model <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(mse_polynomial_model, }\KeywordTok{data.frame}\NormalTok{(}\StringTok{"Order"}\NormalTok{ =}\StringTok{ "4"}\NormalTok{, }\StringTok{"MSE"}\NormalTok{ =}\StringTok{ }\KeywordTok{mean}\NormalTok{(}\KeywordTok{sapply}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, mse, y }\OperatorTok{~}\StringTok{ }\NormalTok{x }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{4}\NormalTok{)))))}
+\NormalTok{mse_polynomial_model <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(mse_polynomial_model, }\KeywordTok{data.frame}\NormalTok{(}\StringTok{"Order"}\NormalTok{ =}\StringTok{ "5"}\NormalTok{, }\StringTok{"MSE"}\NormalTok{ =}\StringTok{ }\KeywordTok{mean}\NormalTok{(}\KeywordTok{sapply}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, mse, y }\OperatorTok{~}\StringTok{ }\NormalTok{x }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{I}\NormalTok{(x}\OperatorTok{^}\DecValTok{5}\NormalTok{)))))}
+\NormalTok{mse_polynomial_model}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Order       MSE
+## 1     1 0.3927276
+## 2     2 0.3367175
+## 3     3 0.3144609
+## 4     4 0.3051602
+## 5     5 0.3053295
+\end{verbatim}
+
+\section{Conclusion summarising
+analysis}\label{conclusion-summarising-analysis}
+
+We can see from the following chart that the MSE flattens out at the
+fourth order polynomial. Although it is not obvious from looking at the
+chart, there is a slight increase in MSE at the fifth order polynomial.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(mse_polynomial_model}\OperatorTok{$}\NormalTok{Order, mse_polynomial_model}\OperatorTok{$}\NormalTok{MSE, }\DataTypeTok{type=}\StringTok{"o"}\NormalTok{, }\DataTypeTok{xlab=}\StringTok{"Order of Polynomial"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"MSE"}\NormalTok{, }\DataTypeTok{main=}\StringTok{"MSE by Order of Polynomial"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{STATS769_2019_S2_bole001_lab04_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+
+\end{document}
