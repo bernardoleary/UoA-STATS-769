@@ -1,0 +1,169 @@
+
+# STATS 769 Lab 05
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(comment=NA)
+```
+
+## The Data
+
+The data are trips on electric scooters and bikes in Austin, Texas,
+which are made available via 
+the official City of Austin data portal.
+
+## Data Import
+
+We use `httr::GET()` to make a request to the data portal API.
+The correct format for this request was found by reading the
+API documentation at 
+<a href="https://dev.socrata.com/foundry/data.austintexas.gov/7d8e-dm7r"></a>.
+
+The request includes number of arguments:
+an "app token" for identification; a specification of the year
+we want trips from and the type of trips we want; 
+a specification of the columns we want returned; and the number of
+trips we want returned.
+
+It is also ok to use the 'RSocrata' package, but make sure that
+you understand how this 'httr' approach works (in case there are
+questions on it in the exam).
+
+```{r eval=FALSE}
+library(httr)
+harvest <- function(year, type, limit) {
+    response <- GET("https://data.austintexas.gov/resource/7d8e-dm7r.json",
+                    query=list("year"=year,
+                               "vehicle_type"=type,
+                               "$select"="trip_duration,trip_distance",
+                               "$offset"=0,
+                               "$limit"=limit,
+                               "$order"=":id",
+                               "$$app_token"="cnBKgWZRxb2MySoKE0iwuDYtt"))
+    content(response)
+}
+tripsJSON <- harvest(2018, "scooter", 10000)
+```
+
+The result of our request is a list of lists of character values.
+We turn each sublist into a character vector with `unlist()`, then
+`rbind()` the vectors together to form a matrix.
+
+
+```{r eval=FALSE}
+tripMatrix <- do.call(rbind, 
+                      lapply(tripsJSON, unlist))
+```
+
+```{r eval=FALSE, echo=FALSE}
+## Rather than re-scrape from web every time, just save one scrape and reload 
+save("tripMatrix", file="trip-matrix.rda")
+```
+
+```{r echo=FALSE}
+## Rather than re-scrape from web every time, just save one scrape and reload 
+load("trip-matrix.rda")
+```
+
+We generate a data frame of the durations and distances and
+convert both columns to numeric values.
+
+```{r}
+scooterTrips2018 <- data.frame(trip_duration=as.numeric(tripMatrix[,1]), 
+                               trip_distance=as.numeric(tripMatrix[,2]))
+```
+
+
+## R processing
+
+Now that we have a data frame containing `r nrow(scooterTrips2018)`
+trip durations and distances, we subset non-negative values
+and log both variables, then we create a "long trips" variable.
+
+```{r}
+trips <- subset(scooterTrips2018, trip_duration > 0 & trip_distance > 0)
+longTrip <- trips$trip_distance > 1000
+tripDuration <- log(trips$trip_duration)
+```
+
+This leaves us with `r nrow(trips)` trips to analyse.
+
+## Fitting models
+
+We split the data into training and test sets.
+
+```{r}
+testIndex <- sample(seq_along(tripDuration), .2*length(tripDuration))
+trainx <- tripDuration[-testIndex]
+trainy <- longTrip[-testIndex]
+testx <- tripDuration[testIndex]
+testy <- longTrip[testIndex]
+```
+
+We fit a logistic regression to the training set and then 
+evaluate its performance on the test set.
+
+```{r}
+glmFit <- glm(y ~ x, data.frame(x=trainx, y=trainy), family="binomial")
+glmProb <- predict(glmFit, data.frame(x=testx), type="response")
+glmPred <- glmProb > .5
+glmDiag <- caret::confusionMatrix(factor(glmPred), factor(testy))
+glmDiag$table
+glmDiag$overall["Accuracy"]
+```
+
+Next, we fit a
+$k$-nearest neighbours model and evaluate its accuracy.
+This shows a slightly better accuracy than the logistic regression.
+
+```{r}
+knnPred <- class::knn(matrix(trainx, ncol=1),
+                      matrix(testx, ncol=1),
+                      trainy,
+                      k=51, prob=TRUE)
+knnProb <- ifelse(as.logical(knnPred), 
+                  attr(knnPred, "prob"), 
+                  1 - attr(knnPred, "prob"))
+knnDiag <- caret::confusionMatrix(knnPred, factor(testy))
+knnDiag$table
+knnDiag$overall["Accuracy"]
+```
+
+## Comparing the models
+
+The following plot shows the rough pattern of shifting proportions
+of long trips as a function of trip duration (black dots), with the 
+smooth, monotonic logistic regression predictions as a red line, and 
+the sharp, multiple transitions of the $k$-nearest neighbours model
+as a green line.
+
+```{r}
+breaks <- seq(3, 9, .5)
+midbreaks <- breaks[-1] - diff(breaks)/2
+props <- tapply(testy, cut(testx, breaks), mean)
+plot(midbreaks, props, pch=16)
+o <- order(testx)
+lines(testx[o], glmProb[o], col="red")
+lines(testx[o], knnProb[o], col="green")
+```
+
+## Conclusion
+
+We obtained the data from the original source via requests to a web API,
+extracting just trip distances and durations for scooter trips from
+2018.
+
+We removed non-positive values from both variables, logged the durations,
+and created a new "long trip" variable (trips longer than 1km).
+
+A logistic regression model predicts the proportion of 
+long trips from trip duration quite well.
+
+A $k$-nearest neighbour model predicts slightly better, but the 
+jaggedness in the predictions is probably less realistic than 
+the smooth trend of the logistic model for these data.
+There does appear to be a quite well-behaved smooth 
+transition in the proportion of long trips as the trip
+duration increases and that is nicely captured by the relatively
+simple logistic regression model.
+
+

@@ -1,0 +1,305 @@
+
+# STATS 769 Lab 04
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(comment=NA)
+```
+
+## The data
+
+The data are trips on electric scooters and bikes in Austin, Texas.
+The data came in several forms
+
+* 10 JSON files containing 10,000 trips each.  Here is the first trip.
+
+```{r echo=FALSE}
+library(jsonlite)
+cat(prettify(gsub("[[]", "", 
+                  readLines("/course/Labs/Lab04/JSON/trips-1.json", n=1))))
+```
+
+* A MongoDB database containing 100,000 trips (with the same structure as
+the JSON files).
+
+* 10 XML files containing 10,000 trips each.  Here is the first trip.
+
+```{r echo=FALSE}
+cat(system("basex 'doc(\"/course/Labs/Lab04/XML/trips-1.xml\")//row[1]'",
+           intern=TRUE), 
+    sep="\n")
+```
+
+## Data Import
+
+Reading individual JSON files into R is straightforward with the
+'jsonlite' package because the
+result is immediately a data frame.
+
+```{r}
+library(jsonlite)
+trips1json <- fromJSON(readLines("/course/Labs/Lab04/JSON/trips-1.json"))
+dim(trips1json)
+names(trips1json)
+trips1json[1, c("trip_distance", "trip_duration")]
+```
+
+The following code reads all 10 JSON files in, combines them
+to create a single data frame, and then extracts just the scooter
+trips from 2018.
+
+```{r}
+filesJSON <- list.files("/course/Labs/Lab04/JSON", pattern="trips-.*.json",
+                        full.names=TRUE)
+tripsJSON <- do.call(rbind, 
+                     lapply(filesJSON, function(x) fromJSON(readLines(x))))
+scooterTrips2018json <- subset(tripsJSON, 
+                               year == 2018 & vehicle_type == "scooter",
+                               c("trip_duration", "trip_distance"))
+scooterTrips2018json$trip_duration <- 
+    as.numeric(scooterTrips2018json$trip_duration)
+scooterTrips2018json$trip_distance <- 
+    as.numeric(scooterTrips2018json$trip_distance)
+dim(scooterTrips2018json)
+```
+
+Reading data from the MongoDB database using the 'mongolite' package
+means that we can just extract
+the subset of the data that we want.  
+We do not have to read the entire data set into R.
+Again, the result is immediately
+an R data frame.
+
+```{r}
+library(mongolite)
+m <- mongo("trips")
+scooterTrips2018mongo <- 
+    m$find(query='{ "year": "2018", "vehicle_type": "scooter" }',
+           fields='{ "_id": 0, "trip_duration": 1, "trip_distance": 1 }')
+dim(scooterTrips2018mongo)
+```
+
+Reading data from individual XML files is also straightforward with the
+'xml2' package, though the result is not an R data frame.
+
+```{r}
+library(xml2)
+trips1xml <- read_xml("/course/Labs/Lab04/XML/trips-1.xml")
+xml_find_first(trips1xml, "//row")
+```
+
+We have to extract trip distance and trip duration values from the 
+result.
+
+```{r}
+as.numeric(xml_text(xml_find_first(trips1xml, "//trip_duration")))
+as.numeric(xml_text(xml_find_first(trips1xml, "//trip_distance")))
+```
+
+The following code reads all 10 XML files, extracts the trip duration and
+distance for scooter trips in 2018 and combines the result into a data frame.
+The XPath used to extract the information identifies the 
+`trip_distance` and `trip_duration` elements anywhere within the XML
+document then adds a predicate that checks for
+a preceding sibling `vehicle_type` element with content `"scooter"`
+and a following sibling `year` with content `"2018"`.
+
+```{r}
+filesXML <- list.files("/course/Labs/Lab04/XML", pattern="trips-.*.xml",
+                        full.names=TRUE)
+predicate <- "preceding-sibling::vehicle_type[text() = 'scooter'] and
+              following-sibling::year[text() = '2018']"
+distancePath <- paste0("//trip_distance[", predicate, "]")
+durationPath <- paste0("//trip_duration[", predicate, "]")
+scooterTrips2018xml <- 
+    do.call(rbind, 
+            lapply(filesXML,
+                   function(x) {
+                       xml <- read_xml(x)
+                       distance <- xml_text(xml_find_all(xml, distancePath))
+                       duration <- xml_text(xml_find_all(xml, durationPath))
+                       data.frame(trip_duration=as.numeric(duration),
+                                  trip_distance=as.numeric(distance))
+                   }))
+dim(scooterTrips2018xml)
+``` 
+
+If we use BaseX to query the XML files all at once, we can just
+extract the XML values that we want before reading them into R.
+The following Xquery code loops over all `row` elements with XML
+files in the `/course/Labs?Lab04/XML/` directory, selects those
+rows that have a `vehicle_type` child with content `"scooter"`
+*and* a `year` child with content `"2018"`, then returns
+the content of `trip_duration` and `trip_distance` children,
+separated by a comma.  
+
+It is also ok to do this in two queries, one to return 
+`trip_duration` and one to return `trip_distance` (that makes the
+return clause a lot simpler).
+
+```{bash}
+cat query.xq
+```
+
+If we run the XQuery with BaseX ...
+
+```{bash results="hide"}
+basex query.xq > trips-xquery.csv
+```
+
+... we get a CSV file ...
+
+```{bash}
+head -6 trips-xquery.csv
+```
+
+... that we can just read the CSV file into R as usual.
+
+```{r}
+scooterTrips2018xquery <- read.csv("trips-xquery.csv", header=FALSE,
+                                   col.names=c("trip_duration",
+                                               "trip_distance"))
+dim(scooterTrips2018xquery)
+```
+
+The following code checks that all four methods have produced 
+exactly the same data frame in R (ignoring order of rows).
+
+```{r}
+all(scooterTrips2018json == scooterTrips2018mongo &
+    scooterTrips2018json == scooterTrips2018xml &
+    scooterTrips2018json[order(scooterTrips2018json$trip_duration,
+                               scooterTrips2018json$trip_distance), ] == 
+    scooterTrips2018xquery[order(scooterTrips2018xquery$trip_duration, 
+                                 scooterTrips2018xquery$trip_distance), ])
+```
+
+## R processing
+
+Now that we have a data frame containing `r nrow(scooterTrips2018json)`
+trip durations and distances, we will subset non-negative values
+and log both variables in preparation for fitting models.
+
+```{r}
+trips <- subset(scooterTrips2018json, trip_duration > 0 & trip_distance > 0)
+tripDuration <- log(trips$trip_duration)
+tripDistance <- log(trips$trip_distance)
+```
+
+This leaves us with `r nrow(trips)` trips to analyse.
+
+## Choosing a polynomial regression model
+
+We will now reuse code from the previous lab to fit a series of 
+polynomial regression models.  First we generate a set of group labels.
+
+```{r}
+labels <- rep(1:10, length.out=length(tripDuration))
+groups <- sample(labels)
+```
+
+Next, we define a function to calculate MSE for one "fold" of the data.
+
+```{r}
+mse <- function(i, formula) {
+    testSet <- groups == i
+    trainSet <- groups != i
+    fit <- lm(formula, 
+              data.frame(x=tripDistance[trainSet], y=tripDuration[trainSet]))
+    pred <- predict(fit, data.frame(x=tripDistance[testSet]))
+    mean((pred - tripDuration[testSet])^2)
+}   
+```
+
+The following code collects test MSE estimates for 5 models.
+
+```{r}
+MSE <- vector("list", 5)
+MSE[[1]] <- sapply(1:10, mse, y ~ x)
+MSE[[2]] <- sapply(1:10, mse, y ~ x + I(x^2))
+MSE[[3]] <- sapply(1:10, mse, y ~ x + I(x^2) + I(x^3))
+MSE[[4]] <- sapply(1:10, mse, y ~ x + I(x^2) + I(x^3) + I(x^4))
+MSE[[5]] <- sapply(1:10, mse, y ~ x + I(x^2) + I(x^3) + I(x^4) + I(x^5))
+```
+
+If we plot those MSE estimates and join up their average values with
+a line, we see that the models improve with increasing power up to
+a point (around a power of 3 or 4).  The large variability in 
+the power 2 model is notable;  we will come back to that later.
+
+```{r}
+plot.new()
+plot.window(c(1, 5), range(unlist(MSE)))
+for (i in 1:5) {
+    points(rep(i, 10), MSE[[i]])
+}
+lines(1:5, sapply(MSE, mean))
+box()
+axis(1)
+axis(2)
+```
+
+The following code generates predictions from each model using the 
+full data and plots the prediction lines on top of a scatterplot
+of the raw data.  There are two interesting features:
+as expected, the higher powers produce more flexile lines; 
+and there are trip distance outliers that are having a large 
+influence on the model fits.
+
+The higher power models are capable of fitting very closely to the
+distance outliers.  This is hampering the power 3 model from
+doing a better job at small trip distances.  This may also explain
+the high variability of test MSE estimates for the power 2 model;
+the trained model may vary quite a lot depending on whether
+ the training set contains
+these distance outliers.
+
+```{r}
+lmFit <- lm(y ~ x, data.frame(x=tripDistance, y=tripDuration))
+polyFit2 <- lm(y ~ x + I(x^2), 
+               data.frame(x=tripDistance, y=tripDuration))
+polyFit3 <- lm(y ~ x + I(x^2) + I(x^3), 
+               data.frame(x=tripDistance, y=tripDuration))
+polyFit4 <- lm(y ~ x + I(x^2) + I(x^3) + I(x^4), 
+               data.frame(x=tripDistance, y=tripDuration))
+polyFit5 <- lm(y ~ x + I(x^2) + I(x^3) + I(x^4) + I(x^5), 
+               data.frame(x=tripDistance, y=tripDuration))
+dummyX <- seq(0, max(tripDistance), length.out=100)
+polyPred2 <- predict(polyFit2, data.frame(x=dummyX))
+polyPred3 <- predict(polyFit3, data.frame(x=dummyX))
+polyPred4 <- predict(polyFit4, data.frame(x=dummyX))
+polyPred5 <- predict(polyFit5, data.frame(x=dummyX))
+plot(tripDistance, tripDuration, pch=16, col=rgb(0,0,0,.1))
+abline(lmFit, col="blue")
+lines(dummyX, polyPred2, col="red")
+lines(dummyX, polyPred3, col="green")
+lines(dummyX, polyPred4, col="orange")
+lines(dummyX, polyPred5, col="purple")
+```
+
+I should probably discard the trip distance outliers and repeat the 
+modelling process (wI should probably have spotted and dealt with
+the outliers before we began modelling!), but I have left them in
+because they provide an interesting demonstration of the different impact
+of outliers on the different models AND they show the value of 
+plotting the data in addition to calculating simple numerical
+measures of model goodness like estimating the test error (we get
+a much better and more detailed idea of how well the model is
+fitting the data).
+
+## Conclusion
+
+The data came in both JSON and XML formats for this lab, which we handled 
+as raw JSON, via a MongoDB database, as raw XML, and via XQuery request 
+with BaseX.  All approaches produced exactly the same data set.
+
+We only dealt with non-negative trip durations and distances and
+logged both variables.
+
+We used k-fold cross-validation to estimate test error for a range of
+polynomial regressions models (up to degree 5) and that suggested 
+that a degree 3 or 4 polynomial would be adequate.  
+
+Belated plots of the data showed that our model fits may have been
+badly influenced by some trip distance outliers and a degree 3 model
+may be all that we really need to capture the main trend in the data.
+

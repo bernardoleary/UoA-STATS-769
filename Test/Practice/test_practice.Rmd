@@ -1,0 +1,13 @@
+---
+title: "test_practice"
+author: "Bernard O'Leary"
+date: "28 August 2019"
+output: html_document
+---
+
+```{r}
+library(jsonlite)
+data <- fromJSON("2015-json-sample.json")
+data
+```
+

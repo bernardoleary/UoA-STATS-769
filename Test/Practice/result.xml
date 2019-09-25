@@ -1,0 +1,236 @@
+<countries>
+  <country name="Afghanistan" continent="Asia"/>
+  <country name="Albania" continent="Europe"/>
+  <country name="Algeria" continent="Africa"/>
+  <country name="American Samoa" continent="Australia/Oceania"/>
+  <country name="Andorra" continent="Europe"/>
+  <country name="Angola" continent="Africa"/>
+  <country name="Anguilla" continent="America"/>
+  <country name="Antigua and Barbuda" continent="America"/>
+  <country name="Argentina" continent="America"/>
+  <country name="Armenia" continent="Asia"/>
+  <country name="Aruba" continent="America"/>
+  <country name="Australia" continent="Australia/Oceania"/>
+  <country name="Austria" continent="Europe"/>
+  <country name="Azerbaijan" continent="Asia"/>
+  <country name="Bahamas" continent="America"/>
+  <country name="Bahrain" continent="Asia"/>
+  <country name="Bangladesh" continent="Asia"/>
+  <country name="Barbados" continent="America"/>
+  <country name="Belarus" continent="Europe"/>
+  <country name="Belgium" continent="Europe"/>
+  <country name="Belize" continent="America"/>
+  <country name="Benin" continent="Africa"/>
+  <country name="Bermuda" continent="Australia/Oceania"/>
+  <country name="Bhutan" continent="Asia"/>
+  <country name="Bolivia" continent="America"/>
+  <country name="Bosnia and Herzegovina" continent="Europe"/>
+  <country name="Botswana" continent="Africa"/>
+  <country name="Brazil" continent="America"/>
+  <country name="British Virgin Islands" continent="America"/>
+  <country name="Brunei" continent="Asia"/>
+  <country name="Bulgaria" continent="Europe"/>
+  <country name="Burkina Faso" continent="Africa"/>
+  <country name="Burma" continent="Asia"/>
+  <country name="Burundi" continent="Africa"/>
+  <country name="Cambodia" continent="Asia"/>
+  <country name="Cameroon" continent="Africa"/>
+  <country name="Canada" continent="America"/>
+  <country name="Cape Verde" continent="Africa"/>
+  <country name="Cayman Islands" continent="America"/>
+  <country name="Central African Republic" continent="Africa"/>
+  <country name="Chad" continent="Africa"/>
+  <country name="Chile" continent="America"/>
+  <country name="China" continent="Asia"/>
+  <country name="Christmas Island" continent="Australia/Oceania"/>
+  <country name="Cocos Islands" continent="Australia/Oceania"/>
+  <country name="Colombia" continent="America"/>
+  <country name="Comoros" continent="Africa"/>
+  <country name="Congo" continent="Africa"/>
+  <country name="Cook Islands" continent="Australia/Oceania"/>
+  <country name="Costa Rica" continent="America"/>
+  <country name="Cote dIvoire" continent="Africa"/>
+  <country name="Croatia" continent="Europe"/>
+  <country name="Cuba" continent="America"/>
+  <country name="Cyprus" continent="Europe"/>
+  <country name="Czech Republic" continent="Europe"/>
+  <country name="Denmark" continent="Europe"/>
+  <country name="Djibouti" continent="Africa"/>
+  <country name="Dominica" continent="America"/>
+  <country name="Dominican Republic" continent="America"/>
+  <country name="Ecuador" continent="America"/>
+  <country name="Egypt" continent="Asia"/>
+  <country name="Egypt" continent="Africa"/>
+  <country name="El Salvador" continent="America"/>
+  <country name="Equatorial Guinea" continent="Africa"/>
+  <country name="Eritrea" continent="Africa"/>
+  <country name="Estonia" continent="Europe"/>
+  <country name="Ethiopia" continent="Africa"/>
+  <country name="Falkland Islands" continent="Australia/Oceania"/>
+  <country name="Faroe Islands" continent="Europe"/>
+  <country name="Fiji" continent="Australia/Oceania"/>
+  <country name="Finland" continent="Europe"/>
+  <country name="France" continent="Europe"/>
+  <country name="French Guiana" continent="America"/>
+  <country name="French Polynesia" continent="Australia/Oceania"/>
+  <country name="Gabon" continent="Africa"/>
+  <country name="Gambia" continent="Africa"/>
+  <country name="Georgia" continent="Asia"/>
+  <country name="Germany" continent="Europe"/>
+  <country name="Ghana" continent="Africa"/>
+  <country name="Gibraltar" continent="Europe"/>
+  <country name="Greece" continent="Europe"/>
+  <country name="Greenland" continent="Australia/Oceania"/>
+  <country name="Grenada" continent="America"/>
+  <country name="Guadeloupe" continent="America"/>
+  <country name="Guam" continent="Australia/Oceania"/>
+  <country name="Guatemala" continent="America"/>
+  <country name="Guernsey" continent="Europe"/>
+  <country name="Guinea" continent="Africa"/>
+  <country name="Guinea-Bissau" continent="Africa"/>
+  <country name="Guyana" continent="America"/>
+  <country name="Haiti" continent="America"/>
+  <country name="Holy See" continent="Europe"/>
+  <country name="Honduras" continent="America"/>
+  <country name="Hungary" continent="Europe"/>
+  <country name="Iceland" continent="Europe"/>
+  <country name="India" continent="Asia"/>
+  <country name="Indonesia" continent="Asia"/>
+  <country name="Iran" continent="Asia"/>
+  <country name="Iraq" continent="Asia"/>
+  <country name="Ireland" continent="Europe"/>
+  <country name="Israel" continent="Asia"/>
+  <country name="Italy" continent="Europe"/>
+  <country name="Jamaica" continent="America"/>
+  <country name="Japan" continent="Asia"/>
+  <country name="Jersey" continent="Europe"/>
+  <country name="Jordan" continent="Asia"/>
+  <country name="Kazakstan" continent="Asia"/>
+  <country name="Kenya" continent="Africa"/>
+  <country name="Kiribati" continent="Australia/Oceania"/>
+  <country name="Kuwait" continent="Asia"/>
+  <country name="Kyrgyzstan" continent="Asia"/>
+  <country name="Laos" continent="Asia"/>
+  <country name="Latvia" continent="Europe"/>
+  <country name="Lebanon" continent="Asia"/>
+  <country name="Lesotho" continent="Africa"/>
+  <country name="Liberia" continent="Africa"/>
+  <country name="Libya" continent="Africa"/>
+  <country name="Liechtenstein" continent="Europe"/>
+  <country name="Lithuania" continent="Europe"/>
+  <country name="Luxembourg" continent="Europe"/>
+  <country name="Macau" continent="Asia"/>
+  <country name="Macedonia" continent="Europe"/>
+  <country name="Madagascar" continent="Africa"/>
+  <country name="Malawi" continent="Africa"/>
+  <country name="Malaysia" continent="Asia"/>
+  <country name="Maldives" continent="Asia"/>
+  <country name="Mali" continent="Africa"/>
+  <country name="Malta" continent="Europe"/>
+  <country name="Man" continent="Europe"/>
+  <country name="Marshall Islands" continent="Australia/Oceania"/>
+  <country name="Martinique" continent="America"/>
+  <country name="Mauritania" continent="Africa"/>
+  <country name="Mauritius" continent="Africa"/>
+  <country name="Mayotte" continent="Africa"/>
+  <country name="Mexico" continent="America"/>
+  <country name="Micronesia" continent="Australia/Oceania"/>
+  <country name="Moldova" continent="Europe"/>
+  <country name="Monaco" continent="Europe"/>
+  <country name="Mongolia" continent="Asia"/>
+  <country name="Montserrat" continent="America"/>
+  <country name="Morocco" continent="Africa"/>
+  <country name="Mozambique" continent="Africa"/>
+  <country name="Namibia" continent="Africa"/>
+  <country name="Nauru" continent="Australia/Oceania"/>
+  <country name="Nepal" continent="Asia"/>
+  <country name="Netherlands" continent="Europe"/>
+  <country name="Netherlands Antilles" continent="America"/>
+  <country name="New Caledonia" continent="Australia/Oceania"/>
+  <country name="New Zealand" continent="Australia/Oceania"/>
+  <country name="Nicaragua" continent="America"/>
+  <country name="Niger" continent="Africa"/>
+  <country name="Nigeria" continent="Africa"/>
+  <country name="Niue" continent="Australia/Oceania"/>
+  <country name="Norfolk Island" continent="Australia/Oceania"/>
+  <country name="North Korea" continent="Asia"/>
+  <country name="Northern Mariana Islands" continent="Australia/Oceania"/>
+  <country name="Norway" continent="Europe"/>
+  <country name="Oman" continent="Asia"/>
+  <country name="Pakistan" continent="Asia"/>
+  <country name="Palau" continent="Australia/Oceania"/>
+  <country name="Panama" continent="America"/>
+  <country name="Papua New Guinea" continent="Australia/Oceania"/>
+  <country name="Paraguay" continent="America"/>
+  <country name="Peru" continent="America"/>
+  <country name="Philippines" continent="Asia"/>
+  <country name="Pitcairn Islands" continent="Australia/Oceania"/>
+  <country name="Poland" continent="Europe"/>
+  <country name="Portugal" continent="Europe"/>
+  <country name="Puerto Rico" continent="America"/>
+  <country name="Qatar" continent="Asia"/>
+  <country name="Reunion" continent="Australia/Oceania"/>
+  <country name="Romania" continent="Europe"/>
+  <country name="Russia" continent="Europe"/>
+  <country name="Russia" continent="Asia"/>
+  <country name="Rwanda" continent="Africa"/>
+  <country name="Saint Helena" continent="Australia/Oceania"/>
+  <country name="Saint Kitts and Nevis" continent="America"/>
+  <country name="Saint Lucia" continent="America"/>
+  <country name="Saint Pierre and Miquelon" continent="America"/>
+  <country name="Saint Vincent and the Grenadines" continent="America"/>
+  <country name="San Marino" continent="Europe"/>
+  <country name="Sao Tome and Principe" continent="Africa"/>
+  <country name="Saudi Arabia" continent="Asia"/>
+  <country name="Senegal" continent="Africa"/>
+  <country name="Serbia and Montenegro" continent="Europe"/>
+  <country name="Seychelles" continent="Africa"/>
+  <country name="Sierra Leone" continent="Africa"/>
+  <country name="Singapore" continent="Asia"/>
+  <country name="Slovakia" continent="Europe"/>
+  <country name="Slovenia" continent="Europe"/>
+  <country name="Solomon Islands" continent="Australia/Oceania"/>
+  <country name="Somalia" continent="Africa"/>
+  <country name="South Africa" continent="Africa"/>
+  <country name="South Korea" continent="Asia"/>
+  <country name="Spain" continent="Europe"/>
+  <country name="Sri Lanka" continent="Asia"/>
+  <country name="Sudan" continent="Africa"/>
+  <country name="Suriname" continent="America"/>
+  <country name="Svalbard" continent="Europe"/>
+  <country name="Swaziland" continent="Africa"/>
+  <country name="Sweden" continent="Europe"/>
+  <country name="Switzerland" continent="Europe"/>
+  <country name="Syria" continent="Asia"/>
+  <country name="Taiwan" continent="Asia"/>
+  <country name="Tajikistan" continent="Asia"/>
+  <country name="Tanzania" continent="Africa"/>
+  <country name="Thailand" continent="Asia"/>
+  <country name="Togo" continent="Africa"/>
+  <country name="Tonga" continent="Australia/Oceania"/>
+  <country name="Trinidad and Tobago" continent="America"/>
+  <country name="Tunisia" continent="Africa"/>
+  <country name="Turkey" continent="Europe"/>
+  <country name="Turkey" continent="Asia"/>
+  <country name="Turkmenistan" continent="Asia"/>
+  <country name="Turks and Caicos Islands" continent="America"/>
+  <country name="Tuvalu" continent="Australia/Oceania"/>
+  <country name="Uganda" continent="Africa"/>
+  <country name="Ukraine" continent="Europe"/>
+  <country name="United Arab Emirates" continent="Asia"/>
+  <country name="United Kingdom" continent="Europe"/>
+  <country name="United States" continent="America"/>
+  <country name="Uruguay" continent="America"/>
+  <country name="Uzbekistan" continent="Asia"/>
+  <country name="Vanuatu" continent="Australia/Oceania"/>
+  <country name="Venezuela" continent="America"/>
+  <country name="Vietnam" continent="Asia"/>
+  <country name="Virgin Islands" continent="America"/>
+  <country name="Wallis and Futuna" continent="Australia/Oceania"/>
+  <country name="Western Sahara" continent="Africa"/>
+  <country name="Western Samoa" continent="Australia/Oceania"/>
+  <country name="Yemen" continent="Asia"/>
+  <country name="Zaire" continent="Africa"/>
+  <country name="Zambia" continent="Africa"/>
+  <country name="Zimbabwe" continent="Africa"/>
+</countries>

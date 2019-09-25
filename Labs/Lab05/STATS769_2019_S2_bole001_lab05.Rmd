@@ -1,0 +1,102 @@
+---
+title: "STATS 769 - Lab 05 - bole001"
+author: "Bernard O'Leary"
+date: "02 September 2019"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data format and API call details
+
+Data is in JSON format as it comes down from the API. It is a JSON array of "trip" objects. The API allows query-sting based parameters to be passed as part of an HTTP GET request, which means that we don't need to send an HTTP body. The paramters that we use are *limit* to tell the API to give us back a specific number of JSON rows. Without this parameter we get back 1000 by default. We also send a *year* and a *vehicle_type* paramter to further limit our result set. Finally an *api_token* parameter is sent to authenticate our request. I am using a combination of the the *httr* and *jsonlite* libraries to make a simple GET request and then transform the result into a dataframe.
+
+The following code imports the data from the API and lists dataframe dimensions and first 6 rows of the data for validation purposes.
+
+```{r}
+library(httr)
+library(jsonlite)
+
+# Call the resource
+json_result <- GET("https://data.austintexas.gov/resource/7d8e-dm7r.json?$limit=10000&year=2018&vehicle_type=scooter&$$app_token=xo9XRO6BRv2CwPMK9RfhyFzN6")
+
+# Show data frame
+trips <- fromJSON(content(json_result, as="text"))
+head(trips)
+dim(trips)
+
+```
+## Cleanse dataset
+
+Subset only trips with non-negative distances and durations, create a new *long_trip* variable (where "long" means that the trip distance was greater than 1000m). We exclude non-positive durations and distances and make another new variable that is a log of the duration variable called *logged_trip_duration*. Show the first six rescords of the dataframe so that we can see these new variables and validate. 
+
+```{r}
+model_trips <- subset(trips, as.integer(trip_duration) > 0 & as.integer(trip_distance) > 0)
+model_trips$logged_trip_duration <- log(as.integer(model_trips$trip_duration))
+model_trips$long_trip <- as.integer(model_trips$trip_distance) > 1000
+head(model_trips)
+```
+
+## Boxplot the data (to see what we have)
+
+Take a look at the data that we have come back from the API call. We have at least one significant outlier. Other than that looks like we have perhaps a 
+
+```{r}
+plot(log(as.integer(model_trips$trip_distance)) ~ model_trips$long_trip, ylab="distance", xlab="long trip")
+barplot(table(model_trips$long_trip), main="Long Trip (TRUE/FALSE)")
+```
+
+# Comparison of logistic regression and k-nearest neighbours models
+
+We fit a logistic model that predicts the proportion of long trips as a function of trip duration and output the confusion matrix. We do that same for KNN and then try to plot a chat of the result. Unfortunately I have not been able to produce a chart successfully.
+
+```{r}
+test_index <- sample(nrow(model_trips), nrow(model_trips) * 0.1)
+test_trips <- model_trips[test_index, ]
+train_trips <- model_trips[-test_index, ]
+
+overall_proportion <- mean(model_trips$long_trip)
+glm_fit <- glm(y ~ x, data.frame(x=train_trips$logged_trip_duration, y=train_trips$long_trip), family="binomial")
+
+library(caret)
+glm_prob <- predict(glm_fit, data.frame(x=as.integer(test_trips$trip_distance)), type="response")
+glm_pred <- ifelse(glm_prob > .5, 1, 0)
+glm_diag <- confusionMatrix(factor(glm_pred, levels = 1:0), 
+                            factor(as.integer(test_trips$long_trip), levels = 1:0))
+glm_diag$table
+glm_diag$overall["Accuracy"]
+```
+
+```{r}
+train_x <- as.data.frame(train_trips$logged_trip_duration)
+test_x <- as.data.frame(test_trips$logged_trip_duration)
+train_y <- as.data.frame(as.integer(train_trips$long_trip))
+cl = train_y[,1, drop = TRUE]
+
+library(class)
+knn_pred <- knn(train_x, test_x, cl, k=31, prob=TRUE)
+knn_prob <- ifelse(knn_pred == 1, attr(knn_pred, "prob"), 1 - attr(knn_pred, "prob"))
+knn_diag <- confusionMatrix(factor(knn_pred, levels = 1:0), 
+                            factor(as.integer(test_trips$long_trip), levels = 1:0))
+knn_diag$table
+
+knn_diag$overall["Accuracy"]
+par(mar=c(3, 3, 2, 2))
+breaks <- seq(0, 1, .1)
+midbreaks <- breaks[-1] - diff(breaks)/2
+class(test_x)
+props <- tapply(as.integer(test_trips$long_trip), cut(test_trips$logged_trip_duration, breaks), mean)
+props
+midbreaks
+plot(midbreaks, props, pch=16, ylim = c(0,1))
+lines(test_trips$logged_trip_duration, glm_prob, col="red")
+lines(test_trips$logged_trip_duration, knn_prob, col="green")
+
+```
+
+# Summary of analysis
+
+The result of the KNN model is better than for the logistic regression, at least for the Accuracy metric. For logistic regression we have Accuracy of about 51% and for KNN we have accuracy of over 80%. For this dataset and scenario at least KNN is a better model than loogistic regression in terms of Accuracy.

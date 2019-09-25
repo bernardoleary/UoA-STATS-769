@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<ElectoralDonations>
+    <party id="P2" name="National">
+        <candidate id="C1" name="Amy" surname="ADAMS" electorate="E2">
+            <donation id="d1" amount="15000.00" donor="D4"/>
+            <donation id="d2" amount="10000.00" donor="D1"/>
+        </candidate>
+    </party>
+    <party id="P1" name="Labour">
+        <candidate id="C2" name="Glenda" surname="ALEXANDER" electorate="E3">
+            <donation id="d3" amount="5383.73" donor="D5"/>
+            <donation id="d4" amount="2000.00" donor="D6"/>
+        </candidate>
+        <candidate id="C3" name="Cliff" surname="ALLEN" electorate="E1">
+            <donation id="d5" amount="2940.00" donor="D3"/>
+            <donation id="d6" amount="2000.00" donor="D2"/>
+        </candidate>
+    </party>
+    <donor id="D1" name="Douglas Catley (D H Catley Trust)"/>
+    <donor id="D2" name="(Hamilton East Labour Electorate Committee)"/>
+    <donor id="D3" name="J &amp; K Broughan"/>
+    <donor id="D4" name="New Zealand National Party"/>
+    <donor id="D5" name="Nordmeyer Trust"/>
+    <donor id="D6" name="NZ Meatworkers Union"/>
+    <electorate id="E1" name="Hamilton East"/>
+    <electorate id="E2" name="Selwyn"/>
+    <electorate id="E3" name="Waitaki"/>
+</ElectoralDonations>
