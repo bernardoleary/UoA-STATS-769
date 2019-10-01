@@ -1,0 +1,2 @@
+STATS769_2019_S2_bole001_lab07.pdf : STATS769_2019_S2_bole001_lab07.Rmd
+	bash STATS769_2019_S2_bole001_lab07.sh;

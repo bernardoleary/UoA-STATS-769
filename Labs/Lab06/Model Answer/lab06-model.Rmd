@@ -1,0 +1,310 @@
+
+# STATS 769 Lab 06
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(comment=NA)
+```
+
+## The Data
+
+```{bash echo=FALSE}
+((n=$(wc -l < /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv) - 1)) && echo $n > n.txt
+ls -sh /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv | awk -e '{ print $1 }' > size.txt
+head -1 /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv | awk -e '{ print(NF) }' > nf.txt
+```
+
+The data are provided in a single `r scan("size.txt", what="character")`
+CSV file containing `r round(scan("n.txt")/1000000, 1)` million trips.
+
+The CSV file is located on each VM at the location 
+`/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv`.
+
+Each line of the file contains a trip and there are 
+`r format(scan("nf.txt"), scientific=FALSE)` variables measured on
+each trip.  The first row of variable names, plus the values for the
+first three trips
+are shown below.
+
+```{bash}
+head -4 /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv
+```
+
+## Import
+
+We will not load the entire data set into R;  instead we are going
+to explore the size of small subsets of the CSV file and extrapolate
+to estimate the size of the full data set.
+
+We read in 1000, 10000, and 100000 rows of the data set into R and
+look at the size of the resulting data frames.
+
+```{r}
+tripsSmall <- read.csv("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+                     nrows=1000)
+tripsMedium <- read.csv("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+                      nrows=10000)
+tripsLarge <- read.csv("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+                       nrows=100000)
+```
+
+```{r}
+object.size(tripsSmall)
+object.size(tripsMedium)
+object.size(tripsLarge)
+```
+
+It looks like, very roughly, 
+20MB per 100000 rows, which suggests a full data frame
+size of a little over 1GB (very similar to the size of the data set
+on disk in this case).
+
+Looking at the classes of the columns that R creates, the variables
+we will be most interested in are integers.  At 6.5 million observations,
+these columns will be in the region of 25MB.  Any calculation involving
+those variables could easily
+double that to 50MB if the result becomes numeric (rather than integer).
+
+```{r}
+sapply(tripsSmall, class)
+```
+
+The largest contributors to the data frame size are the factor columns.
+This is because the level labels of the factors are also stored and,
+for some factors at least, there are many different levels (the worst is
+`ID`, where every value is unique;  compare that to the `Vehicle.Type`
+factor, which only has a few different levels). 
+
+```{r}
+sapply(tripsLarge, object.size)
+```
+
+The `Time` and `Date` 
+variables should not be factors and if we stored them as times and dates in R
+they would be significantly smaller (because dates are stored just as numbers of
+days or numbers of seconds since an origin).
+
+## Tidy
+
+The very first row of data contains missing values, so we will exclude that.
+
+```{r}
+head(tripsLarge, 1)
+```
+
+There is at least one very value in both distance and duration.  
+
+```{r}
+tail(sort(tripsLarge$Trip.Distance))
+tail(sort(tripsLarge$Trip.Duration))
+```
+
+We will exclude a further three observations; the largest duration and
+the two largest distances.
+
+```{r}
+tripsKeep <- tripsLarge[-c(1, which.max(tripsLarge$Trip.Duration), 
+                           order(tripsLarge$Trip.Distance, 
+                                 decreasing=TRUE)[1:2]), ]
+```
+
+## Transform
+
+Using 100000 trips, we remove non-positive durations and distances
+and then log both variables.
+
+```{r echo=FALSE}
+library(profmem)
+topmem <- function(p, n=6, depth=1) {
+    sum <- total(p)
+    p <- subset(p, what == "alloc")
+    order <- order(p$bytes, decreasing=TRUE)
+    funs <- sapply(p$trace, 
+                   function(x) { 
+                       len <- length(x)
+                       if (len > 0) {
+                           if (depth < len) {
+                               x[len - depth + 1]
+                           } else {
+                               x[len] 
+                           }
+                       } else {
+                           "<internal>"
+                       }
+                   })
+    rbind(data.frame(FUN=as.character(funs[order]), Bytes=p$bytes[order],
+                     stringsAsFactors=FALSE)[1:n, ],
+          data.frame(FUN=c("", ""), Bytes=c(nrow(p), sum), 
+                     stringsAsFactors=FALSE, row.names=c("N", "TOTAL")))
+}   
+```
+
+```{r echo=FALSE}
+maxmem <- function(mem1, mem2) {
+    mem2[2, 6] - mem1[2, 6]
+}
+
+```
+
+We consider two approaches to the transformation:  (A) use
+`subset()` and create new variables within the `trips` data frame;
+and (B) calculate a simple logical vector for subsetting
+and create new variables separate from the `trips` data frame.
+In both cases, we use a function `topmem()` (not shown) that prints the
+result of 
+`profmem::profmem()` to
+look at the largest individual R objects being
+created, and we use a function `maxmem()` (not shown) that
+extracts values from `gc()` to look at the maximum overall memory used by R.
+
+```{r}
+mem1 <- gc(reset=TRUE)
+p <- profmem({
+    trips <- subset(tripsKeep, Trip.Duration > 0 & Trip.Distance > 0)
+    trips$logDuration <- log(trips$Trip.Duration)
+    trips$logDistance <- log(trips$Trip.Distance)
+})
+mem2 <- gc()
+```
+
+The results for option A show that the largest R objects created
+are only on the order of one or two columns of 100,000 values, but
+the largest amount of memory used at one time was nearly 24MB.
+This suggests that there are lots of intermediate values being
+generated by `subset()`.
+
+```{r}
+topmem(p)
+```
+
+```{r}
+maxmem(mem1, mem2)
+```
+
+```{r}
+mem1 <- gc(reset=TRUE)
+p <- profmem({
+    subset <- tripsKeep$Trip.Duration > 0 & tripsKeep$Trip.Distance > 0
+    logDuration <- log(tripsKeep$Trip.Duration[subset])
+    logDistance <- log(tripsKeep$Trip.Distance[subset])
+})
+mem2 <- gc()
+```
+
+The results for option B show that the largest R objects created
+are similar to option A, but
+the largest amount of memory used at one time was only 5MB.
+Extrapolating to the full data set, option A might consume a maximum
+memory of around 1.5GB, while option B might only require a little 
+over 300MB.
+
+```{r}
+topmem(p)
+```
+
+```{r}
+maxmem(mem1, mem2)
+```
+
+These transformations leave us with `r sum(subset)` trips for the
+modelling phase.
+
+## Model
+
+We will consider a simple linear regression model and estimate
+test accuracy using k-fold cross-validation and
+we will measure the maximum memory usage.
+
+```{r}
+labels <- rep(1:10, length.out=length(logDuration))
+groups <- sample(labels)
+mse <- function(i, formula) {
+    testSet <- groups == i
+    trainSet <- groups != i
+    fit <- lm(formula, 
+              data.frame(x=logDistance[trainSet], y=logDuration[trainSet]))
+    pred <- predict(fit, data.frame(x=logDistance[testSet]))
+    mean((pred - logDuration[testSet])^2, na.rm=TRUE)
+}   
+```
+
+This code uses a maximum memory of around 55MB.  
+This extrapolates to peak memory requirements,
+for the full data set, of around 3.5GB.
+
+```{r}
+mem1 <- gc(reset=TRUE)
+mean(sapply(1:10, mse, y ~ x))
+mem2 <- gc()
+```
+
+```{r}
+maxmem(mem1, mem2)
+```
+
+Here is a plot of the regression model fit to the entire data set.
+
+```{r}
+smoothScatter(logDuration ~ logDistance)
+abline(lm(logDuration ~ logDistance))
+```
+
+## Overall memory available and used
+
+Note that the total memory used for all persistent R objects is now
+only in the region of 40MB, but the peak memory usage overall was
+close to 100MB (corresponding to about 2.5GB and 6.5GB respectively
+for the full data set).  On the other hand, we have generated several
+unnecessary copies of some of the data (e.g., the logged durations and
+distances are held in both the `trips` data frame and in separate 
+vectors), so this worst-case scenario could be an overestimate.
+
+```{r}
+gc()
+```
+
+Each VM has approximately 200GB of RAM, which provides plenty of room
+for this analysis on the full data set.  However, if 40 students
+were all trying to perform this analysis on the same VM, we might
+run out of RAM.
+
+```{bash}
+free -g
+```
+
+The shell command `time` reports almost 200MB required to process this report.
+
+```
+/usr/bin/time -f "%M" Rscript -e 'rmarkdown::render("lab06-model.Rmd")'
+```
+
+```
+187364
+```
+
+That is higher than the measurements we made when just running the R code
+to transform the data and estimate test error, but, for example, we
+did not take into account the memory that R itself uses 
+(e.g., the `Ncells` in `gc()` output) and
+the 'rmarkdown' package will use additional memory when processing the report.
+
+## Conclusion
+
+The data source for this lab was a single CSV file over 1GB in size.
+
+We only loaded subsets of this file into R in order to assess
+the memory requirements for working with the data.
+
+Two approaches to transforming the data showed that there are sometimes
+(memory) costs to using higher-level convenience functions like `subset()`.
+
+Two approaches to modelling the data showed that there can be significant 
+differences in memory requirements for slightly different analysis code.
+Because the allocation of memory within R functions is complex,
+the best way to determine these differences is to measure the
+memory consumption like we have done.
+
+The worst case memory requirements for fitting even a simple linear
+regression model to the full data would be very taxing even for a modern
+PC with 8GB of RAM.  The VM, with 200GB RAM would have no trouble with
+this task, but if 40 students attempted the task simultaneously 
+even the VM would struggle.
