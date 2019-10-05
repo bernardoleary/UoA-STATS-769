@@ -1,0 +1,104 @@
+---
+title: "STATS 769 - Lab 07 - bole001"
+author: "Bernard O'Leary"
+date: "30 September 2019"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Dataset description
+
+Dataset is the same as what we used for Lab06 and Lab07, this time we use the entire dataset though rather than just 100000 records. The data set for this lab is a single large CSV file containing electric vehicle trips.
+
+# Read in the data
+
+We read in the data using three diffrent approaches:
+
+- read.csv() without specifying colClasses will bring the data through in auto-detected/assigned format, which is convenient but not particularly efficient. 
+- read.csv() specifying colClasses will bring the data through in a specific format, this is more work upfront as we need to inspect the data and decide on the best fit for the data format, but far more efficient as we can be very specific about what comes through into the dataframe.
+- data.table::fread() specifying colClasses not only enables us to gain the efficiency of specifying data format, but also using the datatable structure which is inherently a more efficient structure than the dataframe.
+
+For each techniques we will inspect the execution time using the system.time() function. Execution time for read.csv() is significantly shorter when specifying colClasses. We see further improvement in performance when using data.table::fread() with colClasses specified. All results have dimensions 6532457 x 16.
+
+```{r}
+# Specify location of the raw data
+path <- "C:\\Files\\"
+#path <- "/course/data.austintexas.gov/"
+filename <- paste0(path, "Dockless_Vehicle_Trips.csv")
+
+# Read in using read.csv with no colClasses specified
+system.time(tripsReadCsvWithoutColClasses <- read.csv(filename, stringsAsFactors=FALSE)[-1,])
+# Check dimensions - should be 6532457 x 16
+dim(tripsReadCsvWithoutColClasses)
+
+# Read in using read.csv with colClasses specified
+system.time(
+    tripsReadCsvWithColClasses <- read.csv(filename, stringsAsFactors=FALSE,
+                      colClasses=c("character",
+                                   "character",
+                                   "factor",
+                                   "integer",
+                                   "integer",
+                                   "character",
+                                   "character",
+                                   "character",
+                                   "integer",
+                                   "integer",
+                                   "integer",
+                                   "integer",
+                                   "integer",
+                                   "integer",
+                                   "character",
+                                   "character"))[-1,]
+)
+# Check dimensions - should be 6532457 x 16
+dim(tripsReadCsvWithColClasses)
+
+# Read in using data.table::fread with colClasses specified
+system.time(
+    tripDT <- data.table::fread(filename, stringsAsFactors=FALSE,
+                      colClasses=c("character",
+                                   "character",
+                                   "factor",
+                                   "integer",
+                                   "integer",
+                                   "character",
+                                   "character",
+                                   "character",
+                                   "integer",
+                                   "integer",
+                                   "integer",
+                                   "integer",
+                                   "integer",
+                                   "integer",
+                                   "character",
+                                   "character"))[-1,]
+)
+# Check dimensions - should be 6532457 x 16
+dim(tripDT)
+```
+
+# Create logged columns
+
+Measure time it takes to remove non-zero number and then create logged values for Trip.Distance and Trip.Duration and add them to the data.table tripsDT. Add the time up and print it out.
+
+```{r}
+time1 <- system.time(tripDTsub <- subset(tripDT, tripDT$`Trip Distance` > 0 & tripDT$`Trip Duration` > 0))
+time2 <- system.time(tripDTsub$logDuration <- log(tripDTsub$`Trip Duration`))
+time3 <- system.time(tripDTsub$logDistance <- log(tripDTsub$`Trip Distance`))
+time1 + time2 + time3
+```
+
+# Faster creation of log variables
+
+Use properties of the data.table data structure to enable much faster creation of logged varibles for Trip.Duration and Trip.Distance.
+
+```{r}
+time2 <- system.time(tripDT[, logDuration := log(tripDT$`Trip Duration`)])
+time3 <- system.time(tripDT[, logDistance := log(tripDT$`Trip Distance`)])
+time2 + time3
+```
