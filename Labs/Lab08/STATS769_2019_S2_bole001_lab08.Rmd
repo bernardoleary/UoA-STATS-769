@@ -1,7 +1,7 @@
 ---
-title: "STATS 769 - Lab 07 - bole001"
+title: "STATS 769 - Lab 08 - bole001"
 author: "Bernard O'Leary"
-date: "30 September 2019"
+date: "06 October 2019"
 output:
   html_document: default
 ---
@@ -26,8 +26,8 @@ For each techniques we will inspect the execution time using the system.time() f
 
 ```{r}
 # Specify location of the raw data
-path <- "C:\\Files\\"
-#path <- "/course/data.austintexas.gov/"
+#path <- "C:\\Files\\"
+path <- "/course/data.austintexas.gov/"
 filename <- paste0(path, "Dockless_Vehicle_Trips.csv")
 
 # Read in using read.csv with no colClasses specified
