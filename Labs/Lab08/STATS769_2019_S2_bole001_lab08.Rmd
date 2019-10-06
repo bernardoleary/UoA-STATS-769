@@ -3,7 +3,7 @@ title: "STATS 769 - Lab 07 - bole001"
 author: "Bernard O'Leary"
 date: "30 September 2019"
 output:
-  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
