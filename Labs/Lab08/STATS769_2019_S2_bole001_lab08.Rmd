@@ -26,8 +26,8 @@ For each techniques we will inspect the execution time using the system.time() f
 
 ```{r}
 # Specify location of the raw data
-path <- "C:\\Files\\"
-#path <- "/course/data.austintexas.gov/"
+#path <- "C:\\Files\\"
+path <- "/course/data.austintexas.gov/"
 filename <- paste0(path, "Dockless_Vehicle_Trips.csv")
 
 # Read in using read.csv with no colClasses specified
@@ -87,18 +87,48 @@ dim(tripDT)
 Measure time it takes to remove non-zero number and then create logged values for Trip.Distance and Trip.Duration and add them to the data.table tripsDT. Add the time up and print it out.
 
 ```{r}
+# Get the log variables
 time1 <- system.time(tripDTsub <- subset(tripDT, tripDT$`Trip Distance` > 0 & tripDT$`Trip Duration` > 0))
 time2 <- system.time(tripDTsub$logDuration <- log(tripDTsub$`Trip Duration`))
 time3 <- system.time(tripDTsub$logDistance <- log(tripDTsub$`Trip Distance`))
+# Print the total time taken 
 time1 + time2 + time3
 ```
 
 # Faster creation of log variables
 
-Use properties of the data.table data structure to enable much faster creation of logged varibles for Trip.Duration and Trip.Distance.
+Use properties of the data.table data structure to enable much faster creation of logged varibles for Trip.Duration and Trip.Distance. I am not sure how to omit non-zero values in place, have tried to use na.omit and also na.rm=TRUE but was unable to get either to work, so using existing subsetting approach.
 
 ```{r}
+# Get the log variables
+time1 <- system.time(tripDT <- subset(tripDT, tripDT$`Trip Distance` > 0 & tripDT$`Trip Duration` > 0))
 time2 <- system.time(tripDT[, logDuration := log(tripDT$`Trip Duration`)])
 time3 <- system.time(tripDT[, logDistance := log(tripDT$`Trip Distance`)])
-time2 + time3
+# Print the total time taken
+time1 + time2 + time3
 ```
+
+# Define labels and MSE function 
+
+As provided in the Lab08 instruction sheet. Measure the time taken to run the procesdure and the memory used by using the profile toolkit. 
+
+```{r}
+# Define function and variables
+labels <- rep(1:10, length.out=nrow(tripDT))
+groups <- sample(labels)
+mse <- function(i, formula) {
+  ## cat(i, "\n")
+  testSet <- groups == i
+  trainSet <- groups != i
+  fit <- lm(formula,
+    data.frame(x=tripDT[trainSet, logDistance], y=tripDT[trainSet, logDuration]))
+  pred <- predict(fit, data.frame(x=tripDT$logDistance[testSet]))
+  mean((pred - tripDT$logDuration[testSet])^2, na.rm=TRUE)
+}
+# Run the code, visualise and measure performance
+library(profvis)
+profvis({
+  time1 <- system.time(mean(sapply(1:10, mse, y ~ x)))
+})
+```
+
