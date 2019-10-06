@@ -110,12 +110,13 @@ time1 + time2 + time3
 
 # Define labels and MSE function 
 
-As provided in the Lab08 instruction sheet. Measure the time taken to run the procesdure and the memory used by using the profile toolkit. 
+As provided in the Lab08 instruction sheet. Measure the time taken to run the procesdure and the memory used by using the profile toolkit. The measured results suggest that by far the most amount of time used by this code is in fitting the linear model, specifically the lm() function.
 
 ```{r}
 # Define function and variables
 labels <- rep(1:10, length.out=nrow(tripDT))
 groups <- sample(labels)
+# Define MSE function
 mse <- function(i, formula) {
   ## cat(i, "\n")
   testSet <- groups == i
@@ -127,8 +128,49 @@ mse <- function(i, formula) {
 }
 # Run the code, visualise and measure performance
 library(profvis)
+# Call gc() to make the effect of garbage collection more stable
+gc() 
 profvis({
   time1 <- system.time(mean(sapply(1:10, mse, y ~ x)))
 })
+# Print the elapsed time
+time1
 ```
 
+# Optimise the MSE function to perform faster
+
+Compare optimised time using MSE2 function (defined below) to original MSE function (defined above). 
+
+```{r}
+# Define optimised MSE2 function
+mse2 <- function(i, formula) {
+  ## cat(i, "\n")
+  testSet <- groups == i
+  trainSet <- groups != i
+  # Added "na.action = na.omit" parameter to the lm() function
+  fit <- lm(formula,
+    data.frame(x=tripDT[trainSet, logDistance], y=tripDT[trainSet, logDuration]), na.action = na.omit)
+  pred <- predict(fit, data.frame(x=tripDT$logDistance[testSet]))
+  mean((pred - tripDT$logDuration[testSet])^2, na.rm=TRUE)
+}
+# Run the code, visualise and measure performance
+# Call gc() to make the effect of garbage collection more stable
+gc() 
+profvis({
+  time1 <- system.time(mean(sapply(1:10, mse2, y ~ x)))
+})
+# Print the elapsed time
+time1
+```
+
+# Measure memory usage to run the RMD file
+
+The command used to measure the elapsed time in seconds of the RMD file was as follows:
+
+/usr/bin/time -f "%e" Rscript -e 'library("rmarkdown"); render("STATS769_2019_S2_bole001_lab08.Rmd")'
+
+
+
+# Summary and Conclusion
+
+R and the Bash Shell provide a range of ways to measure performance and memory use, in this labe some of those have been explored for the analysis of a large dataset. The machine that is used to run these experiments has significant memory capacity, however a normal computer would certainly struggle if the entire dataset were loaded, rather that only 100K. More investigation of the Bash "time"" command will be necessary for me to understand it properly. 
