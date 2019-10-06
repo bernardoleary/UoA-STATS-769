@@ -26,8 +26,8 @@ For each techniques we will inspect the execution time using the system.time() f
 
 ```{r}
 # Specify location of the raw data
-#path <- "C:\\Files\\"
-path <- "/course/data.austintexas.gov/"
+path <- "C:\\Files\\"
+#path <- "/course/data.austintexas.gov/"
 filename <- paste0(path, "Dockless_Vehicle_Trips.csv")
 
 # Read in using read.csv with no colClasses specified
@@ -171,7 +171,7 @@ The command used to measure the elapsed time in seconds of the RMD file was as f
 /usr/bin/time -f "%e" Rscript -e 'library("rmarkdown"); render("STATS769_2019_S2_bole001_lab08.Rmd")'
 ```
 
-The document takes approximately __ minutes to process.
+The document takes approximately 190 seconds (over three minutes) to process - I'm not sure how I would be able to reduce this much further though as even with my optimised MSE2 function removed from processing it takes well over two minutes to run the whole RMD file.
 
 # Summary and Conclusion
 
