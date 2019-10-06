@@ -167,10 +167,13 @@ time1
 
 The command used to measure the elapsed time in seconds of the RMD file was as follows:
 
+```
 /usr/bin/time -f "%e" Rscript -e 'library("rmarkdown"); render("STATS769_2019_S2_bole001_lab08.Rmd")'
+```
 
-
+The document takes approximately __ minutes to process.
 
 # Summary and Conclusion
 
-R and the Bash Shell provide a range of ways to measure performance and memory use, in this labe some of those have been explored for the analysis of a large dataset. The machine that is used to run these experiments has significant memory capacity, however a normal computer would certainly struggle if the entire dataset were loaded, rather that only 100K. More investigation of the Bash "time"" command will be necessary for me to understand it properly. 
+We have tried using both the dataframe and datatable structure to process and cleanse data and tried to optimise the MSE function by applying the "na.action = na.omit" to the lm() function that consumes most of the processing time for the function - this did not appear to make much difference though. We used the Linux time function to measure the running time of the RMD in an effort to have it run in under 2 minutes. 
+
