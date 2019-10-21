@@ -1,0 +1,143 @@
+---
+title: "STATS 769 - Lab 09 - bole001"
+author: "Bernard O'Leary"
+date: "14 October 2019"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Dataset description
+
+Dataset is the same as what we used for Lab06, Lab07 and Lab08, but with all columns removed except for Distance and Duration. The data files distance-duration.csv and Dockless_Vehicle_Trips.csv have the exact same number of rows of data, with the exception that there is no header and no missing data in the forst row with distance-duration.csv - so it has two less rows (6532457 in total).
+
+# Split the data roughly evenly
+
+Using the BASH "split" command we can split the data into 10 roughly even files so that the data can be imported into R in parallel by 10 separate threads. The command is executed in this files associated shell script file (named "STATS769_2019_S2_bole001_lab09.sh") and is exactly as follows:
+
+```
+split -l 653246 /course/data.austintexas.gov/distance-duration.csv
+```
+
+We use the "-l" flag to specify that the files should be split into 10 files of size 6532457 / 10 = 653246 (rounded up). This code results in 10 files each named: xaa, xab, xac, xad, xae, xaf, xag, xah, xai and xaj. The last file (xaj) has slightly fewer lines than the other 9 (653243 rather than 653246) because of the rounding up that we have done. These files can be imported into R using the following code.
+
+```{r}
+# Import the necessary library
+library("parallel")
+require("data.table")
+# Make a vector of files to import content of
+files <- c("xaa", "xab", "xac", "xad", "xae", "xaf", "xag", "xah", "xai", "xaj")
+# Detect how many cores we have available
+no_cores <- detectCores()
+cl <- makeCluster(no_cores)
+# Use parLapply to import
+trips <- parLapply(cl, files, read.table, header = FALSE, sep = ',') 
+trips <- rbindlist(trips)
+```
+
+# Remove data and create logged columns
+
+Measure time it takes to remove non-zero number and then create logged values for Trip.Distance and Trip.Duration and add them to the data.table tripsDT. Add the time up and print it out.
+
+```{r}
+# Get the log variables
+trips <- subset(trips, trips$V1 > 0 & trips$V2 > 0)
+trips$logDistance <- log(trips$V1)
+trips$logDuration <- log(trips$V2)
+```
+
+# Estimate test error by K-fold cross-validation
+
+Define the function and then use system.time to measure time taken to run it.
+
+## Define function and labels
+
+```{r} 
+labels <- rep(1:10, length.out=nrow(trips))
+groups <- sample(labels)
+mse <- function(i) {
+  ## cat(i, "\n")
+  testSet <- groups == i
+  trainSet <- groups != i
+  fit <- lm(logDuration ~ logDistance, trips, na.action=NULL)
+  pred <- predict(fit, trips[testSet, ])
+  mean((pred - trips$logDuration[testSet])^2, na.rm=TRUE)
+}
+```
+
+## In serial
+
+```{r}
+# Measure time to run
+time <- system.time(m <- mean(sapply(1:10, mse)))
+# Print the mean
+m
+# Print the elapsed time
+time
+```
+
+## In parallel using mcapply
+
+```{r}
+# Measure time to run
+time <- system.time(m <- mean(unlist(mclapply(1:10, mse, mc.cores=no_cores))))
+# Print the mean
+m
+# Print the elapsed time
+time
+```
+
+## In parallel using parLapply
+
+Note - need to export two variable here so they can be reached from parallel processing, which increases the overall execution time.
+
+```{r}
+# Export variables
+clusterExport(cl=cl, varlist=c("groups", "trips"), envir=environment())
+# Measure time to run
+time <- system.time(m <- mean(unlist(parLapply(cl, 1:10, mse))))
+# Print the mean
+m
+# Print the elapsed time
+time
+```
+
+## In parallel using caret
+
+Unfortunately I have been unable to get on to the STATS VMs for several hours to test my code and although I have capability to run this code from home, it took a very long time to download all of the dependencies for the caret package and I wasn't able to test it - so have commented out the code for the time being. Errors I was getting when trying to access to the STATS VMs are as follows:
+
+```
+bernard@INFOSTRUCTURE:/mnt/d/Study/UoA-STATS-769/Labs/Lab09$ ssh bole001@sc-cer00014-05.its.auckland.ac.nz
+ssh: connect to host sc-cer00014-05.its.auckland.ac.nz port 22: Resource temporarily unavailable
+bernard@INFOSTRUCTURE:/mnt/d/Study/UoA-STATS-769/Labs/Lab09$ ssh bole001@sc-cer00014-04.its.auckland.ac.nz
+ssh: connect to host sc-cer00014-04.its.auckland.ac.nz port 22: Resource temporarily unavailable
+```
+
+Code to execute in parallel using caret library (commented) as follows:
+
+```{r}
+# Load libraries
+#library(doParallel)
+#library(caret)
+# Register cores
+#registerDoParallel(cores=no_cores)
+#train(logDuration ~ logDistance, data=trips, method="lm", trControl=trainControl(method="cv", number=10))
+```
+
+## Stop the cluster (tidy up resources)
+
+Stop the cluster that we have been using (cl) for parallel processing.
+
+```{r}
+stopCluster(cl)
+```
+
+# Summary and Conclusion
+
+It appears as though as processing is increasingly parallelised, processing time decreases, although there were some discrepacies with this as the mclapply function would sometimes run much longer than sapply.
+
+Although there are overheads accumulated by using parallel approach, such as the need to export variables and data structures to shared memory space so they can be accessed in parallel, the benefits are clear if you are using the variables and data structure over-and-over and they are not oeften required to be loaded back into shared memory space.
+

@@ -1,0 +1,248 @@
+
+# STATS 769 Lab 07
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(comment=NA)
+```
+
+```{r echo=FALSE}
+maxmem <- function(mem1, mem2) {
+    mem2[2, 6] - mem1[2, 6]
+}
+```
+
+## The Data
+
+The data are provided in a single large CSV file (same as for Lab 6).
+
+```{bash}
+ls -lh /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv
+```
+
+```{bash}
+wc -l /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv
+```
+
+## Import
+
+We estimated in the last lab that importing and analysing the entire 
+data set might require up to 6.5 GB, which would be taxing
+for a standard laptop or desktop with 8GB of RAM.
+
+The virtual machines allow us to make use of the simple solution 
+of using a machine with more RAM because we have up to almost 200GB
+available (although it is shared by the whole class).
+
+```{bash}
+free -h
+```
+
+The following code reads the entire CSV file into R, logs the distance
+and duration variables (only for positive values), fits a 
+linear regression model, and reports the coefficients of 
+that model.
+
+The entire data set requires a little over 1Gb and
+the calculations use a maximum of a little over 2GB of memory.
+
+```{r eval=FALSE}
+m1 <- gc(reset=TRUE)
+colnames <- gsub(" ", ".",
+                 scan("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+                      sep=",", what="character", strip.white=TRUE, nlines=1))
+trips <- 
+    read.csv("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+             header=FALSE, skip=2, col.names=colnames)
+trips <- subset(trips, Trip.Duration > 0 & Trip.Distance > 0)
+trips$logDuration <- log(trips$Trip.Duration)
+trips$logDistance <- log(trips$Trip.Distance)
+fit <- lm(logDuration ~ logDistance, trips)
+m2 <- gc()
+```
+```
+> object.size(trips)
+1145256120 bytes
+
+> maxmem(m1, m2)
+[1] 2215.9
+
+> coef(fit)
+(Intercept) logDistance 
+   2.391286    0.542471 
+```
+
+One way to reduce memory usage is to load only the variables that we intend
+to use.  Rather than loading the entire data set into R and subsetting,
+we can use the shell tool `awk` to extract just the variables we need.
+This uses considerably less memory than the 1Gb that R required to
+load the full data set.
+
+```{bash eval=FALSE}
+/usr/bin/time -f "%M" awk -F, -e '{ print($4, ",", $5) }' /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv > distance-duration.csv
+```
+```
+4040
+```
+
+Now that we have a CSV that just contains the variables we need, we
+can load that into R.
+
+```{r}
+tripDF <- read.csv("distance-duration.csv",
+                   header=FALSE, skip=2, 
+                   col.names=c("Trip.Duration", "Trip.Distance"))
+object.size(tripDF)
+```
+
+We will also load the CSV using the 'data.table' package.
+We specify `check.names` so that we do not have spaces
+in column names.
+
+```{r}
+library(data.table)
+tripDT <- fread("distance-duration.csv", 
+                header=FALSE, skip=2, 
+                col.names=c("Trip.Duration", "Trip.Distance"))
+object.size(tripDT)
+```
+
+The `data.table` object is smaller than the `data.frame` because
+it loaded both variables as integer.
+
+```{r}
+sapply(tripDF, class)
+sapply(tripDT, class)
+```
+
+## Tidy and Transform
+
+Allocate a large object to set the garbage collection trigger point
+high (so that comparisons between alternative approaches is fairer).
+
+```{r}
+object.size(integer(5e8))
+```
+
+We can also use the "total" from `profmem()` to compare approaches.
+
+```{r}
+library(profmem)
+```
+
+The data frame approach uses over 500Mb.
+
+```{r}
+m1 <- gc(reset=TRUE)
+p <- profmem({
+    tripDF <- subset(tripDF, Trip.Distance > 0 & Trip.Duration > 0)
+    tripDF$logDuration <- log(tripDF$Trip.Duration)
+    tripDF$logDistance <- log(tripDF$Trip.Distance)
+})
+m2 <- gc()
+maxmem(m1, m2)
+total(p)
+```
+
+We can do better than that with 'data.table' by defining the 
+new variables using its special subsetting syntax.
+
+```{r}
+m1 <- gc(reset=TRUE)
+p <- profmem({
+    tripDT[Trip.Distance > 0 & Trip.Duration > 0, 
+           c("logDuration", "logDistance") := list(log(Trip.Duration), 
+                                                   log(Trip.Distance))]
+})
+m2 <- gc()
+maxmem(m1, m2)
+total(p)
+```
+
+## Model
+
+We now fit a linear regression model, which requires around 600Mb for
+both the `data.frame` and the `data.table`.
+
+```{r}
+mem1 <- gc(reset=TRUE)
+dfFit <- lm(logDuration ~ logDistance, tripDF)
+coef(dfFit)
+mem2 <- gc()
+maxmem(mem1, mem2)
+```
+```{r}
+mem1 <- gc(reset=TRUE)
+dtFit <- lm(logDuration ~ logDistance, 
+            tripDT[Trip.Distance > 0 & Trip.Duration > 0])
+coef(dtFit)
+mem2 <- gc()
+maxmem(mem1, mem2)
+```
+
+We can use less than a tenth of that memory by streaming the
+data (reading 100,000 rows at a time) and fitting the
+model using `biglm()` and `update()` from the 'biglm' package.
+
+```{r}
+mem1 <- gc(reset=TRUE)
+library(biglm)
+con <- file("distance-duration.csv", "r")
+tripChunk <- read.csv(con, colClasses="numeric",
+                      header=FALSE, skip=2, 
+                      col.names=c("Trip.Duration", "Trip.Distance"),
+                      nrows=100000)
+tripChunk <- subset(tripChunk, Trip.Distance > 0 & Trip.Duration > 0)
+tripChunk$logDuration <- log(tripChunk$Trip.Duration)
+tripChunk$logDistance <- log(tripChunk$Trip.Distance)
+streamFit <- biglm(logDuration ~ logDistance, tripChunk)
+i <- 0
+while (TRUE) {
+    ## cat(paste("Read ", i, "\n")); i <- i + 1
+    tripChunk <- read.csv(con, colClasses="numeric",
+                          header=FALSE, 
+                          col.names=c("Trip.Duration", "Trip.Distance"),
+                          nrows=100000)
+    if (nrow(tripChunk) == 0) break
+    tripChunk <- subset(tripChunk, Trip.Distance > 0 & Trip.Duration > 0)
+    tripChunk$logDuration <- log(tripChunk$Trip.Duration)
+    tripChunk$logDistance <- log(tripChunk$Trip.Distance)
+    streamFit <- update(streamFit, tripChunk)
+    gc()
+}
+close(con)
+coef(streamFit)
+mem2 <- gc()
+maxmem(mem1, mem2)
+```
+
+## Conclusion
+
+The data set is a 1.3Gb CSV file.  Reading this in naively and fitting a
+linear regression model using
+standard R functions required a little over 2Gb of RAM.
+
+On the large virtual machines,
+we were able to simply use the large amount of available 
+RAM to read and analyse 
+this data set with no problem (although it was slow).
+
+We used `awk` to subset out just the two variables of interest to
+produce a smaller CSV file with very low peak memory usage.
+
+Tidying and transforming the data from the smaller CSV file
+required several hundred Mb of RAM, but we could reduce that
+significantly by using the 'data.table' package.
+
+Fitting a linear model to the smaller data set also required several
+hundred Mb, but we could reduce that dramatically by using a 
+streaming approach.
+
+Throughout the analysis, we only reported regression coefficients
+to check that we were getting the same result from the different
+approaches.  If we had to also calculate the mean square error for
+the model fit, memory usage would no doubt increase a little for 
+each approach, but there would be an extra penalty for the streaming
+approach because we would have to both write more complex code and 
+read the entire data set in all over again.  That is one downside
+of not holding all of the data in memory at once.
+

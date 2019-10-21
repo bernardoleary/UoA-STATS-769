@@ -1,0 +1,222 @@
+
+# STATS 769 Lab 09
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(comment=NA)
+```
+
+This lab is focused on parallel computing.
+
+## The Data
+
+The data are provided in a single CSV file containing just 
+the trip distance and trip duration variables.
+
+```{bash}
+ls -lh /course/data.austintexas.gov/distance-duration.csv
+```
+
+```{bash}
+wc -l /course/data.austintexas.gov/distance-duration.csv
+```
+
+## Import
+
+We read the CSV into R with `read.csv()`.  (This is not too slow on
+a file of this size and we avoid 'data.table' for this lab because 
+it makes use of concurrency itself, which makes it harder for us
+to clearly demonstrate our own use of parallel computing.)
+
+```{r}
+system.time({
+    tripsAll <- 
+        read.csv("/course/data.austintexas.gov/distance-duration.csv", 
+                 header=FALSE, colClasses="numeric",
+                 col.names=c("Trip.Distance", "Trip.Duration"))
+})
+```
+
+## Parallel Import
+
+The following (bash) code spits the single CSV into 10 almost equal-sized
+smaller CSVs.
+
+```{bash}
+split --lines=653246 --numeric-suffixes=1 --additional-suffix=.csv /course/data.austintexas.gov/distance-duration.csv trips-
+```
+
+The function `readChunk()` can read one of the smaller CSV files.
+
+```{r}
+readChunk <- function(i) {
+    read.csv(sprintf("trips-%02d.csv", i),
+              header=FALSE,
+              col.names=c("Trip.Distance", "Trip.Duration"), 
+              colClasses="numeric")
+}
+
+```
+
+The following code reads the 10 smaller CSV files in parallel and
+then combines them into a single data frame.  This is faster than
+reading the single large CSV, but not by a large factor.
+
+```{r}
+library(parallel)
+```
+
+```{r}
+system.time({
+    chunks <- mclapply(1:10, readChunk, mc.cores=10)
+    tripChunks <- do.call(rbind, chunks)
+})
+```
+
+The following code just checks that the final data frame is the 
+same as the data frame we got from just reading the single big CSV file.
+
+```{r}
+all(tripsAll == tripChunks)
+```
+
+## Tidy and Transform
+
+The non-positive durations and distances are removed and both 
+variables are logged.
+
+```{r}
+trips <- subset(tripsAll, Trip.Distance > 0 & Trip.Duration > 0) 
+trips$logDuration <- log(trips$Trip.Duration)
+trips$logDistance <- log(trips$Trip.Distance)
+```
+
+## Model
+
+The following code generates labels that divide the data randomly
+into 10 approximately equal subsets.
+
+```{r}
+labels <- rep(1:10, length.out=nrow(trips))
+groups <- sample(labels)
+```
+
+The next code defines an `mse()` function that uses the 
+`trips` data frame to calculate the test error for a single fold.
+(We can use 
+`na.action=NULL` because there are no `NA` values in the data.)
+
+```{r}
+mse <- function(i) {
+    ## cat(i, "\n")
+    testSet <- groups == i
+    trainSet <- groups != i
+    fit <- lm(logDuration ~ logDistance, trips, na.action=NULL)
+    pred <- predict(fit, trips[testSet, ])
+    mean((pred - trips$logDuration[testSet])^2, na.rm=TRUE)
+}   
+```
+
+The following code estimates test error using k-fold cross-validation,
+but only uses a single CPU for the repeated folds.
+
+```{r}
+system.time(
+    MSEserial <- sapply(1:10, mse)
+)
+MSEserial
+```
+
+The following code performs the same calculation, but uses 10 CPUs in
+parallel.  The 10 R sessions that run in parallel are forks of the
+main R session.  This means that they are very fast to create 
+and we do not have to share variables like the `trips` data frame.
+The speed improvement is significant (though not 10 times because there
+is still some overhead involved in creating 10 forks and communicating
+between the master R session and the forked sessions).
+
+```{r}
+system.time(
+    MSEfork <- mclapply(1:10, mse, mc.cores=10)
+)
+all.equal(MSEserial, unlist(MSEfork))
+```
+
+The next code repeats the parallel calculation, again using 10 CPUs,
+but this time using independent R sessions (that communicate with the
+master R session via sockets).  The `parLapply()` part of the calculation
+is again very fast, however, the set up cost is much higher this time,
+both because it takes longer to start 10 independent R sessions
+and because we have more work to set up those sessions with the
+required packages and data objects.
+
+```{r}
+system.time({
+    cl <- makeCluster(10)
+    clusterExport(cl, c("trips", "labels", "groups"))
+})
+system.time({
+    MSEcluster <- parLapply(cl, 1:10, mse)
+})
+stopCluster(cl)
+all.equal(MSEserial, unlist(MSEcluster))
+```
+
+The advantage of this "cluster" parallelism is that it would also work
+on Windows and it could be expanded to include R sessions running on
+remote  machines.
+
+
+## Implicit Parallelism
+
+The following code sets up the 'caret' package to use 10 cpu cores.
+
+```{r}
+library(caret)
+library(doParallel)
+registerDoParallel(cores=10)
+```
+
+The following code uses `caret::train()` to estimate test error
+via k-fold cross-validation.  The time taken is a LOT higher
+than for our own parallel computation and even a lot higher than
+our own serial computation.  The reason is all of the extra checking
+and defensive programming within 'caret'.  For example, 'caret'
+attempts to recover gracefully from failures within the computation
+by wrapping everything within calls to `try()`.  This is a nice
+demonstration of the trade-off between convenient, high-level
+interfaces and low-level implementations.  On the other hand, do
+not underestimate the value of being able to trust established code that has
+been tested millions of times compared to writing 
+(and debugging) our own code.
+
+```{r}
+train_control <- trainControl(method="cv", number=10)
+system.time({
+    model <- train(logDuration ~ logDistance, data=trips, 
+                   trControl=train_control, method="lm")
+})
+```
+
+The following output shows that  the 'caret' solution gives essentially the
+same answer as our own code.
+
+```{r}
+model
+sqrt(mean(MSEserial))
+```
+
+## Conclusion
+
+The data set is a single large CSV.
+
+Parallel execution via forked R sessions (and shared memory)
+provides massive speed improvements.
+Independent R sessions involve more set up cost, so require larger
+problems to start demonstrating an advantage.
+
+We were also able to demonstrate a speed improvement for data import
+by splitting the data into multiple files and reading them
+concurrently.
+
+Implicit parallelism comes at a speed cost that can be surprisingly high.
+

@@ -1,0 +1,288 @@
+
+# STATS 769 Lab 08
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(comment=NA)
+```
+
+This lab is focused on measuring execution time (mostly of R code)
+and finding ways to make code go faster.
+
+## The Data
+
+The data are provided in a single large CSV file (same as for Lab 6).
+
+```{bash}
+ls -lh /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv
+```
+
+```{bash}
+wc -l /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv
+```
+
+## Import
+
+We compare three ways to read the CSV file into R;
+we only import a subset of CSV file so that we do not waste too
+much time, but the speed differences should still be apparent.
+
+This code reads the column names off the first line of the CSV file.
+We will use this for all three approaches to allow ourselves to
+skip the first line of (empty) data in the file.
+
+```{r}
+colnames <- gsub(" ", ".",
+                 scan("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+                      sep=",", what="character", strip.white=TRUE, nlines=1))
+```
+
+The first approach is a naive call to `read.csv()`, leaving the function
+to figure out the data types.
+
+```{r}
+system.time(
+    tripDF <- 
+        read.csv("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+                 skip=2, nrows=100000, header=FALSE,
+                 col.names=colnames)
+)
+```
+We will get the column classes from that result and modify them
+to provide hints for the next approach.
+```{r}
+colClasses <- gsub("factor", "character", sapply(tripDF, class))
+```
+
+The second approach provides `read.csv()` with data types so that 
+it does not have to guess.  The speed up is significant.
+```{r}
+system.time(
+    tripDF <- 
+        read.csv("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+                 skip=2, nrows=100000, header=FALSE,
+                 col.names=colnames,
+                 colClasses=colClasses)
+)
+```
+The third approach is to use `data.table::fread()`.  This
+is significantly faster again.
+```{r}
+library(data.table)
+system.time(
+    tripDT <- 
+        fread("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+              skip=2, nrows=100000,
+              col.names=colnames,
+              colClasses=unname(colClasses))
+)
+```
+
+The following code checks that the 
+`tripDF` data frame contains the same values as the `tripDT`
+data table.
+
+```{r}
+all(tripDF == as.data.frame(tripDT))
+```
+
+The following code uses `data.table::fread()` to read in the full data set.
+
+```{r}
+tripDT <- 
+    fread("/course/data.austintexas.gov/Dockless_Vehicle_Trips.csv",
+          skip=2, 
+          col.names=colnames,
+          colClasses=unname(colClasses))
+```
+
+## Tidy and Transform
+
+The 'data.table' package also provides significant speed improvements
+for tidying and transforming data, although we must use 
+non-standard syntax to achieve the speed improvements.
+
+The following code uses standard R functions and syntax to 
+exclude non-positive trip durations and distances and
+then log both variables.
+
+```{r}
+system.time({
+    tripDTsub <- subset(tripDT, 
+                        Trip.Distance > 0 & Trip.Duration > 0)
+    tripDTsub$logDuration <- log(tripDTsub$Trip.Duration)
+    tripDTsub$logDistance <- log(tripDTsub$Trip.Distance)
+})
+```
+
+If we use the special 'data.table' syntax, we can get a
+very appreciable speed improvement.
+
+```{r}
+system.time(
+    tripDT[Trip.Distance > 0 & Trip.Duration > 0, 
+           c("logDuration", "logDistance") := list(log(Trip.Duration), 
+                                                   log(Trip.Distance))]
+)
+```
+
+The following code checks that the (corresponding subsets of the) two
+results match.
+
+```{r}
+all(mapply(function(x, y) all(x == y, na.rm=TRUE), 
+           tripDTsub, 
+           tripDT[Trip.Distance > 0 & Trip.Duration > 0]))
+```
+ 
+## Model
+
+The following code defines groups and a function for estimating the
+test error for a simple linear regression of trip duration predicted by
+trip distance.
+
+```{r}
+## Define 10 splits
+labels <- rep(1:10, length.out=nrow(tripDT))
+groups <- sample(labels)
+```
+
+```{r}
+mse <- function(i, formula) {
+    ## cat(i, "\n")
+    testSet <- groups == i
+    trainSet <- groups != i
+    fit <- lm(formula, 
+              data.frame(x=tripDT[trainSet, logDistance], 
+                         y=tripDT[trainSet, logDuration]))
+    pred <- predict(fit, data.frame(x=tripDT$logDistance[testSet]))
+    mean((pred - tripDT$logDuration[testSet])^2, na.rm=TRUE)
+}   
+```
+
+We can write the function to a 
+file and `source()` it back in so that we can
+get per-line profiling results.
+
+```{r}
+dump("mse", "mse.R")
+source("mse.R", keep.source=TRUE)
+```
+
+We use the 'profvis' package to generate a visualisation of the
+profiling information.
+
+This shows that most of the time is being spent in `lm()`.
+If we look a bit deeper (at the "flame graph" in the bottom half of the
+'profvis' output), about half of that time is spent in `lm.fit()`
+and half is in `na.omit()`.  
+
+```{r}
+library(profvis)
+```
+
+```{r}
+system.time(
+    p <- profvis(MSE <- sapply(1:10, mse, y ~ x))
+)
+mean(MSE)
+p
+```
+
+We can remove the time spent in `na.omit()` by removing NA values 
+ourselves and then setting `na.action=NULL` in the `lm()` call.
+
+The following code removes the NAs.
+
+```{r}
+tripDTclean <- na.omit(tripDT)
+## REdefine 10 splits
+labels <- rep(1:10, length.out=nrow(tripDTclean))
+groups <- sample(labels)
+```
+
+The next code defines a new `mse2()` function that uses the
+data set with the NAs removed and calls `lm()` with
+`na.action=NULL`.
+
+```{r}
+mse2 <- function(i, formula) {
+    ## cat(i, "\n")
+    testSet <- groups == i
+    trainSet <- groups != i
+    fit <- lm(formula, 
+              data.frame(x=tripDTclean[trainSet, logDistance], 
+                         y=tripDTclean[trainSet, logDuration]),
+              na.action=NULL)
+    pred <- predict(fit, data.frame(x=tripDTclean$logDistance[testSet]))
+    mean((pred - tripDTclean$logDuration[testSet])^2, na.rm=TRUE)
+}   
+```
+```{r}
+dump("mse2", "mse2.R")
+source("mse2.R", keep.source=TRUE)
+```
+
+Again, we use 'profvis' to visualise the results, and we see that
+we have indeed managed to remove the `na.omit()` calls from 
+happening, which has cut the overall time almost in half.
+
+```{r}
+system.time(
+    p <- profvis(MSE2 <- sapply(1:10, mse2, y ~ x))
+)
+```
+
+The MSE estimate is not quite exactly the same as before 
+because we have had to reassign folds for the cross-validation
+(after removing `NA` values).
+
+```{r}
+mean(MSE2)
+p
+```
+
+A quick check on memory usage shows that we have had peak memory usage
+at around 4 or 5Gb, which is less than we estimated in Lab 6,
+but we are using more memory efficient tools (like 'data.table').
+
+```{r}
+gc()
+```
+
+The `Makefile` has been modified for this lab so that it uses the shell command
+`time` to time the full build
+of this report.  
+
+```
+lab08-model.html: lab08-model.Rmd
+    time -p Rscript -e 'rmarkdown::render("$<")
+```
+An example of the result is shown below, which shows that the build uses
+less than 1.5 minutes of CPU time.  Different measurements at different
+times can produce quite different "real" times as the VM load or even
+the network load varies over time.
+
+```
+real 77.33
+user 76.02
+sys 7.59
+```
+
+## Conclusion
+
+The data set is a single large CSV.
+
+The `data.table::fread()` function is a LOT faster than `read.csv()`
+for importing the data into R,
+though it produces a "data.table" rather than a "data.frame".
+
+Tidying and transforming the data is also a LOT faster using 'data.table',
+though we have to use special 'data.table' syntax to achieve the 
+speed improvement.
+
+The code to calculate test error for a linear model spent most its
+time in calls to `lm()`,
+and half of that was calls to `na.omit()`.
+We were able to cut the `lm()` time in half by removing `NA` values
+from the data set before calculating test error, thereby avoiding
+the calls to `na.omit()` within `lm()`.

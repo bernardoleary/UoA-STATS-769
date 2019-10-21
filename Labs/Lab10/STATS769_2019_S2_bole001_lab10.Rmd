@@ -1,0 +1,37 @@
+---
+title: "STATS 769 - Lab 10 - bole001"
+author: "Bernard O'Leary"
+date: "21 October 2019"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Dataset description
+
+Dataset is the same as what we used for Lab06, Lab07, Lab08 and Lab09 but with all columns removed except for Type, Distance and Duration. The data files type-durn-dist.csv, distance-duration.csv and Dockless_Vehicle_Trips.csv have the exact same number of rows of data, with the exception that there is no header and no missing data in the forst row with type-durn-dist.csv and distance-duration.csv - so these files have two less rows (6532457 in total).
+
+
+```{r}
+# Import the necessary libraries
+library(data.table)
+library(rmr2)
+
+# Get the trips
+tripsDT <- fread("/course/data.austintexas.gov/type-durn-dist.csv")
+
+# Create the format
+tripsCSV <- make.input.format("csv", sep=",", skip=1, stringsAsFactors=FALSE, col.names=c("Type","Duration","Distance"))
+
+
+```
+
+# Summary and Conclusion
+
+It appears as though as processing is increasingly parallelised, processing time decreases, although there were some discrepacies with this as the mclapply function would sometimes run much longer than sapply.
+
+Although there are overheads accumulated by using parallel approach, such as the need to export variables and data structures to shared memory space so they can be accessed in parallel, the benefits are clear if you are using the variables and data structure over-and-over and they are not oeften required to be loaded back into shared memory space.
+
