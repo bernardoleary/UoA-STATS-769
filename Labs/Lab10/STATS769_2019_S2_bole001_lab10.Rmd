@@ -84,10 +84,10 @@ The object size is far smaller than that for the tripsDT variable at approximate
 
 ```{r}
 # Get library and set environmnet variables
-Sys.setenv(JAVA_HOME = "/usr/lib/jvm/java-8-openjdk-amd64/")
-sc <- spark_connect(master = "local", spark_home="/course/spark/spark-2.1.0-bin-hadoop2.7")
 library(sparklyr)
 library(dplyr)
+Sys.setenv(JAVA_HOME = "/usr/lib/jvm/java-8-openjdk-amd64/")
+sc <- spark_connect(master = "local", spark_home="/course/spark/spark-2.1.0-bin-hadoop2.7")
 
 # Import data
 tripsSpark <- spark_read_csv(sc, name='tripsSpark', path="/course/data.austintexas.gov/type-durn-dist.csv", header=TRUE, delimiter=",")
