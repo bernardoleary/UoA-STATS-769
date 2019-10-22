@@ -36,6 +36,9 @@ object.size(tripsDT)
 To be used with the map/reduce function - show size of object, which is approximately 38320 bytes. Uncertain why we do this at this stage as there is not data in the object.
 
 ```{r}
+# Import library
+library(rmr2)
+
 # Create the format
 tripsCSV <- make.input.format("csv", sep=",", skip=1, stringsAsFactors=FALSE, col.names=c("Type","Duration","Distance"))
 object.size(tripsCSV)
@@ -55,8 +58,6 @@ Deleted /tmp/file4aaf2ec5b79e
 So commented out for the time being.
 
 ```{r}
-# Import library
-library(rmr2)
 # Set Java environment variables
 ## Sys.setenv(JAVA_HOME="/usr/lib/jvm/default-java")
 Sys.setenv(JAVA_HOME = "/usr/lib/jvm/java-8-openjdk-amd64/")
