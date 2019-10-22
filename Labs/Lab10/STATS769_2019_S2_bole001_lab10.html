@@ -374,22 +374,95 @@ summary {
 <div id="dataset-description" class="section level1">
 <h1>Dataset description</h1>
 <p>Dataset is the same as what we used for Lab06, Lab07, Lab08 and Lab09 but with all columns removed except for Type, Distance and Duration. The data files type-durn-dist.csv, distance-duration.csv and Dockless_Vehicle_Trips.csv have the exact same number of rows of data, with the exception that there is no header and no missing data in the forst row with type-durn-dist.csv and distance-duration.csv - so these files have two less rows (6532457 in total).</p>
+</div>
+<div id="import-data" class="section level1">
+<h1>Import data</h1>
+<p>Use three approaches to import data.</p>
+<div id="import-using-data.tablefread" class="section level2">
+<h2>Import using data.table::fread</h2>
+<p>Print size of imported object using fread, at approximatey 104520976 bytes it is relatively large as expected.</p>
 <pre class="r"><code># Import the necessary libraries
 library(data.table)
+
+# Get the trips using standard approach
+tripsDT &lt;- fread(&quot;/course/data.austintexas.gov/type-durn-dist.csv&quot;)
+object.size(tripsDT)</code></pre>
+<pre><code>## 104520976 bytes</code></pre>
+</div>
+<div id="define-input-format-for-file" class="section level2">
+<h2>Define input format for file</h2>
+<p>To be used with the map/reduce function - show size of object, which is approximately 38320 bytes. Uncertain why we do this at this stage as there is not data in the object.</p>
+<pre class="r"><code># Import library
 library(rmr2)</code></pre>
 <pre><code>## Warning: S3 methods 'gorder.default', 'gorder.factor', 'gorder.data.frame',
 ## 'gorder.matrix', 'gorder.raw' were declared in NAMESPACE but not found</code></pre>
 <pre><code>## Please review your hadoop settings. See help(hadoop.settings)</code></pre>
-<pre class="r"><code># Get the trips
-tripsDT &lt;- fread(&quot;/course/data.austintexas.gov/type-durn-dist.csv&quot;)
+<pre class="r"><code># Create the format
+tripsCSV &lt;- make.input.format(&quot;csv&quot;, sep=&quot;,&quot;, skip=1, stringsAsFactors=FALSE, col.names=c(&quot;Type&quot;,&quot;Duration&quot;,&quot;Distance&quot;))
+object.size(tripsCSV)</code></pre>
+<pre><code>## 38320 bytes</code></pre>
+</div>
+<div id="import-data-using-mapreduce-not-working" class="section level2">
+<h2>Import data using Map/Reduce (NOT WORKING)</h2>
+<p>Getting the folloing error when I run this function:</p>
+<pre><code>Error in system(final.command, intern = TRUE) :
+  running command '/course/hadoop/hadoop-3.2.0/bin/hadoop jar /course/hadoop/hadoop-3.2.0/share/hadoop/tools/lib/hadoop-streaming-3.2.0.jar    -D     'stream.map.output=typedbytes'     -D     'stream.reduce.input=typedbytes'     -D     'stream.reduce.output=typedbytes'     -D     'mapred.reduce.tasks=0'     -D     'mapreduce.map.java.opts=-Xmx400M'     -D     'mapreduce.reduce.java.opts=-Xmx400M'     -files     '/course/hadoop-tmp/Rtmp2tfe0L/rmr-local-env4aaf7a1e29c0,/course/hadoop-tmp/Rtmp2tfe0L/rmr-global-env4aaf4deda88d,/course/hadoop-tmp/Rtmp2tfe0L/rmr-streaming-map4aaf79fa1102'     -input     '/course/data.austintexas.gov/type-durn-dist.csv'     -output     '/tmp/file4aaf5110d105'     -mapper     'Rscript --vanilla ./rmr-streaming-map4aaf79fa1102'        -outputformat     'org.apache.hadoop.mapred.SequenceFileOutputFormat'   2&gt;&amp;1' had status 1
+2019-10-22 20:06:41,600 INFO Configuration.deprecation: io.bytes.per.checksum is deprecated. Instead, use dfs.bytes-per-checksum
+Deleted /tmp/file4aaf2ec5b79e</code></pre>
+<p>So commented out for the time being.</p>
+<pre class="r"><code># Set Java environment variables
+## Sys.setenv(JAVA_HOME=&quot;/usr/lib/jvm/default-java&quot;)
+Sys.setenv(JAVA_HOME = &quot;/usr/lib/jvm/java-8-openjdk-amd64/&quot;)
+Sys.setenv(HADOOP_CMD=&quot;/course/hadoop/hadoop-3.2.0/bin/hadoop&quot;)
+Sys.setenv(HADOOP_STREAMING=&quot;/course/hadoop/hadoop-3.2.0/share/hadoop/tools/lib/hadoop-streaming-3.2.0.jar&quot;)
 
-# Create the format
-tripsCSV &lt;- make.input.format(&quot;csv&quot;, sep=&quot;,&quot;, skip=1, stringsAsFactors=FALSE, col.names=c(&quot;Type&quot;,&quot;Duration&quot;,&quot;Distance&quot;))</code></pre>
+# Import adata
+#oldwd &lt;- setwd(tempdir())
+#tripsMR &lt;- mapreduce(input=&quot;/course/data.austintexas.gov/type-durn-dist.csv&quot;,
+#                    input.format=tripsCSV,
+#                    map=function(k, v) cbind(v, v^2),
+#                    verbose=FALSE)
+#setwd(oldwd)
+#kv.tripsMR &lt;- from.dfs(result)
+#kv.tripsMR$key
+#head(kv.tripsMR$val)
+#tail(kv.tripsMR$val)
+#object.size(tripsMR)</code></pre>
+</div>
+<div id="import-using-spark" class="section level2">
+<h2>Import using Spark</h2>
+<p>The object size is far smaller than that for the tripsDT variable at approximately 9904 bytes. This is perhaps because the tripsSpark is a pointer to an object being held by the Spark runtime, whereas the tripsDT is a pure R object holding the data directly.</p>
+<pre class="r"><code># Get library and set environmnet variables
+library(sparklyr)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:data.table':
+## 
+##     between, first, last</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>Sys.setenv(JAVA_HOME = &quot;/usr/lib/jvm/java-8-openjdk-amd64/&quot;)
+sc &lt;- spark_connect(master = &quot;local&quot;, spark_home=&quot;/course/spark/spark-2.1.0-bin-hadoop2.7&quot;)
+
+# Import data
+tripsSpark &lt;- spark_read_csv(sc, name='tripsSpark', path=&quot;/course/data.austintexas.gov/type-durn-dist.csv&quot;, header=TRUE, delimiter=&quot;,&quot;)
+object.size(tripsSpark)</code></pre>
+<pre><code>## 9888 bytes</code></pre>
+</div>
+</div>
+<div id="tasks-234" class="section level1">
+<h1>Tasks 2/3/4</h1>
+<p>Incomplete. Unfortunately have been able to complete these remaining tasks due to commitments with my job.</p>
 </div>
 <div id="summary-and-conclusion" class="section level1">
 <h1>Summary and Conclusion</h1>
-<p>It appears as though as processing is increasingly parallelised, processing time decreases, although there were some discrepacies with this as the mclapply function would sometimes run much longer than sapply.</p>
-<p>Although there are overheads accumulated by using parallel approach, such as the need to export variables and data structures to shared memory space so they can be accessed in parallel, the benefits are clear if you are using the variables and data structure over-and-over and they are not oeften required to be loaded back into shared memory space.</p>
+<p>Although I have been unable to get to most of the tasks in the lab, and have had trouble running the Map/Reduce function, it appears that leveraging purpose-built software from outside of the R environment using purpose-built streaming and parallelising technology has distinct benefits for Data Science purposes.</p>
+<p>I will certainly explore these technologies (Spark and Hadoop) in more detail prior to the exam, when I have more time to do so, and to make sure that I am prepared to answer further questions about them.</p>
 </div>
 
 

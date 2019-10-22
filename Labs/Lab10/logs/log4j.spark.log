@@ -1,0 +1,612 @@
+19/10/22 20:49:58 INFO SparkContext: Running Spark version 2.1.0
+19/10/22 20:49:58 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+19/10/22 20:49:58 INFO SecurityManager: Changing view acls to: bole001
+19/10/22 20:49:58 INFO SecurityManager: Changing modify acls to: bole001
+19/10/22 20:49:58 INFO SecurityManager: Changing view acls groups to: 
+19/10/22 20:49:58 INFO SecurityManager: Changing modify acls groups to: 
+19/10/22 20:49:58 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(bole001); groups with view permissions: Set(); users  with modify permissions: Set(bole001); groups with modify permissions: Set()
+19/10/22 20:49:58 INFO Utils: Successfully started service 'sparkDriver' on port 46661.
+19/10/22 20:49:58 INFO SparkEnv: Registering MapOutputTracker
+19/10/22 20:49:58 INFO SparkEnv: Registering BlockManagerMaster
+19/10/22 20:49:58 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+19/10/22 20:49:58 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+19/10/22 20:49:58 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-538b2300-515e-438b-90a2-4e7c09db8b44
+19/10/22 20:49:58 INFO MemoryStore: MemoryStore started with capacity 912.3 MB
+19/10/22 20:49:58 INFO SparkEnv: Registering OutputCommitCoordinator
+19/10/22 20:49:58 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
+19/10/22 20:49:58 INFO Utils: Successfully started service 'SparkUI' on port 4041.
+19/10/22 20:49:58 INFO SparkUI: Bound SparkUI to 127.0.0.1, and started at http://127.0.0.1:4041
+19/10/22 20:49:58 INFO SparkContext: Added JAR file:/usr/local/lib/R/site-library/sparklyr/java/sparklyr-2.0-2.11.jar at spark://127.0.0.1:46661/jars/sparklyr-2.0-2.11.jar with timestamp 1571730598957
+19/10/22 20:49:59 INFO Executor: Starting executor ID driver on host localhost
+19/10/22 20:49:59 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 37265.
+19/10/22 20:49:59 INFO NettyBlockTransferService: Server created on 127.0.0.1:37265
+19/10/22 20:49:59 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+19/10/22 20:49:59 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 127.0.0.1, 37265, None)
+19/10/22 20:49:59 INFO BlockManagerMasterEndpoint: Registering block manager 127.0.0.1:37265 with 912.3 MB RAM, BlockManagerId(driver, 127.0.0.1, 37265, None)
+19/10/22 20:49:59 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 127.0.0.1, 37265, None)
+19/10/22 20:49:59 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 127.0.0.1, 37265, None)
+19/10/22 20:49:59 INFO SharedState: Warehouse path is 'file:/home/bole001/UoA-STATS-769/Labs/Lab10/spark-warehouse'.
+19/10/22 20:49:59 INFO HiveUtils: Initializing HiveMetastoreConnection version 1.2.1 using Spark classes.
+19/10/22 20:49:59 INFO HiveMetaStore: 0: Opening raw store with implemenation class:org.apache.hadoop.hive.metastore.ObjectStore
+19/10/22 20:49:59 INFO ObjectStore: ObjectStore, initialize called
+19/10/22 20:49:59 INFO Persistence: Property hive.metastore.integral.jdo.pushdown unknown - will be ignored
+19/10/22 20:49:59 INFO Persistence: Property datanucleus.cache.level2 unknown - will be ignored
+19/10/22 20:50:00 INFO ObjectStore: Setting MetaStore object pin classes with hive.metastore.cache.pinobjtypes="Table,StorageDescriptor,SerDeInfo,Partition,Database,Type,FieldSchema,Order"
+19/10/22 20:50:01 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MFieldSchema" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:50:01 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MOrder" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:50:02 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MFieldSchema" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:50:02 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MOrder" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:50:02 INFO MetaStoreDirectSql: Using direct SQL, underlying DB is DERBY
+19/10/22 20:50:02 INFO ObjectStore: Initialized ObjectStore
+19/10/22 20:50:02 WARN ObjectStore: Version information not found in metastore. hive.metastore.schema.verification is not enabled so recording the schema version 1.2.0
+19/10/22 20:50:02 WARN ObjectStore: Failed to get database default, returning NoSuchObjectException
+19/10/22 20:50:02 INFO HiveMetaStore: Added admin role in metastore
+19/10/22 20:50:02 INFO HiveMetaStore: Added public role in metastore
+19/10/22 20:50:02 INFO HiveMetaStore: No user is added in admin role, since config is empty
+19/10/22 20:50:02 INFO HiveMetaStore: 0: get_all_databases
+19/10/22 20:50:02 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_all_databases	
+19/10/22 20:50:02 INFO HiveMetaStore: 0: get_functions: db=default pat=*
+19/10/22 20:50:02 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_functions: db=default pat=*	
+19/10/22 20:50:02 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MResourceUri" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:50:02 INFO SessionState: Created local directory: /tmp/b5c97fa9-bc22-4748-9f4b-4466da5dc6a0_resources
+19/10/22 20:50:02 INFO SessionState: Created HDFS directory: /tmp/hive/bole001/b5c97fa9-bc22-4748-9f4b-4466da5dc6a0
+19/10/22 20:50:02 INFO SessionState: Created local directory: /tmp/bole001/b5c97fa9-bc22-4748-9f4b-4466da5dc6a0
+19/10/22 20:50:02 INFO SessionState: Created HDFS directory: /tmp/hive/bole001/b5c97fa9-bc22-4748-9f4b-4466da5dc6a0/_tmp_space.db
+19/10/22 20:50:02 INFO HiveClientImpl: Warehouse location for Hive client (version 1.2.1) is file:/home/bole001/UoA-STATS-769/Labs/Lab10/spark-warehouse
+19/10/22 20:50:02 INFO HiveMetaStore: 0: get_database: default
+19/10/22 20:50:02 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_database: default	
+19/10/22 20:50:02 INFO HiveMetaStore: 0: get_database: global_temp
+19/10/22 20:50:02 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_database: global_temp	
+19/10/22 20:50:02 WARN ObjectStore: Failed to get database global_temp, returning NoSuchObjectException
+19/10/22 20:50:14 INFO SparkContext: Invoking stop() from shutdown hook
+19/10/22 20:50:14 INFO SparkUI: Stopped Spark web UI at http://127.0.0.1:4041
+19/10/22 20:50:14 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+19/10/22 20:50:14 INFO MemoryStore: MemoryStore cleared
+19/10/22 20:50:14 INFO BlockManager: BlockManager stopped
+19/10/22 20:50:14 INFO BlockManagerMaster: BlockManagerMaster stopped
+19/10/22 20:50:14 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+19/10/22 20:50:14 INFO SparkContext: Successfully stopped SparkContext
+19/10/22 20:50:14 INFO ShutdownHookManager: Shutdown hook called
+19/10/22 20:50:14 INFO ShutdownHookManager: Deleting directory /tmp/spark-a147b8ea-67e7-41f0-a4c3-ce41728b1cab
+19/10/22 20:51:14 INFO SparkContext: Running Spark version 2.1.0
+19/10/22 20:51:14 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+19/10/22 20:51:14 INFO SecurityManager: Changing view acls to: bole001
+19/10/22 20:51:14 INFO SecurityManager: Changing modify acls to: bole001
+19/10/22 20:51:14 INFO SecurityManager: Changing view acls groups to: 
+19/10/22 20:51:14 INFO SecurityManager: Changing modify acls groups to: 
+19/10/22 20:51:15 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(bole001); groups with view permissions: Set(); users  with modify permissions: Set(bole001); groups with modify permissions: Set()
+19/10/22 20:51:15 INFO Utils: Successfully started service 'sparkDriver' on port 34209.
+19/10/22 20:51:15 INFO SparkEnv: Registering MapOutputTracker
+19/10/22 20:51:15 INFO SparkEnv: Registering BlockManagerMaster
+19/10/22 20:51:15 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+19/10/22 20:51:15 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+19/10/22 20:51:15 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-321f6abe-4c22-48f1-998a-9464a3910e61
+19/10/22 20:51:15 INFO MemoryStore: MemoryStore started with capacity 912.3 MB
+19/10/22 20:51:15 INFO SparkEnv: Registering OutputCommitCoordinator
+19/10/22 20:51:15 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
+19/10/22 20:51:15 INFO Utils: Successfully started service 'SparkUI' on port 4041.
+19/10/22 20:51:15 INFO SparkUI: Bound SparkUI to 127.0.0.1, and started at http://127.0.0.1:4041
+19/10/22 20:51:15 INFO SparkContext: Added JAR file:/usr/local/lib/R/site-library/sparklyr/java/sparklyr-2.0-2.11.jar at spark://127.0.0.1:34209/jars/sparklyr-2.0-2.11.jar with timestamp 1571730675409
+19/10/22 20:51:15 INFO Executor: Starting executor ID driver on host localhost
+19/10/22 20:51:15 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 46525.
+19/10/22 20:51:15 INFO NettyBlockTransferService: Server created on 127.0.0.1:46525
+19/10/22 20:51:15 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+19/10/22 20:51:15 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 127.0.0.1, 46525, None)
+19/10/22 20:51:15 INFO BlockManagerMasterEndpoint: Registering block manager 127.0.0.1:46525 with 912.3 MB RAM, BlockManagerId(driver, 127.0.0.1, 46525, None)
+19/10/22 20:51:15 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 127.0.0.1, 46525, None)
+19/10/22 20:51:15 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 127.0.0.1, 46525, None)
+19/10/22 20:51:15 INFO SharedState: Warehouse path is 'file:/home/bole001/UoA-STATS-769/Labs/Lab10/spark-warehouse'.
+19/10/22 20:51:15 INFO HiveUtils: Initializing HiveMetastoreConnection version 1.2.1 using Spark classes.
+19/10/22 20:51:16 INFO HiveMetaStore: 0: Opening raw store with implemenation class:org.apache.hadoop.hive.metastore.ObjectStore
+19/10/22 20:51:16 INFO ObjectStore: ObjectStore, initialize called
+19/10/22 20:51:16 INFO Persistence: Property hive.metastore.integral.jdo.pushdown unknown - will be ignored
+19/10/22 20:51:16 INFO Persistence: Property datanucleus.cache.level2 unknown - will be ignored
+19/10/22 20:51:17 INFO ObjectStore: Setting MetaStore object pin classes with hive.metastore.cache.pinobjtypes="Table,StorageDescriptor,SerDeInfo,Partition,Database,Type,FieldSchema,Order"
+19/10/22 20:51:18 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MFieldSchema" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:51:18 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MOrder" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:51:18 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MFieldSchema" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:51:18 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MOrder" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:51:18 INFO MetaStoreDirectSql: Using direct SQL, underlying DB is DERBY
+19/10/22 20:51:18 INFO ObjectStore: Initialized ObjectStore
+19/10/22 20:51:18 WARN ObjectStore: Version information not found in metastore. hive.metastore.schema.verification is not enabled so recording the schema version 1.2.0
+19/10/22 20:51:18 WARN ObjectStore: Failed to get database default, returning NoSuchObjectException
+19/10/22 20:51:19 INFO HiveMetaStore: Added admin role in metastore
+19/10/22 20:51:19 INFO HiveMetaStore: Added public role in metastore
+19/10/22 20:51:19 INFO HiveMetaStore: No user is added in admin role, since config is empty
+19/10/22 20:51:19 INFO HiveMetaStore: 0: get_all_databases
+19/10/22 20:51:19 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_all_databases	
+19/10/22 20:51:19 INFO HiveMetaStore: 0: get_functions: db=default pat=*
+19/10/22 20:51:19 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_functions: db=default pat=*	
+19/10/22 20:51:19 INFO Datastore: The class "org.apache.hadoop.hive.metastore.model.MResourceUri" is tagged as "embedded-only" so does not have its own datastore table.
+19/10/22 20:51:19 INFO SessionState: Created local directory: /tmp/6ad2ebcc-e71f-4416-870c-cf217ea6392c_resources
+19/10/22 20:51:19 INFO SessionState: Created HDFS directory: /tmp/hive/bole001/6ad2ebcc-e71f-4416-870c-cf217ea6392c
+19/10/22 20:51:19 INFO SessionState: Created local directory: /tmp/bole001/6ad2ebcc-e71f-4416-870c-cf217ea6392c
+19/10/22 20:51:19 INFO SessionState: Created HDFS directory: /tmp/hive/bole001/6ad2ebcc-e71f-4416-870c-cf217ea6392c/_tmp_space.db
+19/10/22 20:51:19 INFO HiveClientImpl: Warehouse location for Hive client (version 1.2.1) is file:/home/bole001/UoA-STATS-769/Labs/Lab10/spark-warehouse
+19/10/22 20:51:19 INFO HiveMetaStore: 0: get_database: default
+19/10/22 20:51:19 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_database: default	
+19/10/22 20:51:19 INFO HiveMetaStore: 0: get_database: global_temp
+19/10/22 20:51:19 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_database: global_temp	
+19/10/22 20:51:19 WARN ObjectStore: Failed to get database global_temp, returning NoSuchObjectException
+19/10/22 20:51:19 INFO SparkSqlParser: Parsing command: SHOW TABLES
+19/10/22 20:51:21 INFO HiveMetaStore: 0: get_database: default
+19/10/22 20:51:21 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_database: default	
+19/10/22 20:51:21 INFO HiveMetaStore: 0: get_database: default
+19/10/22 20:51:21 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_database: default	
+19/10/22 20:51:21 INFO HiveMetaStore: 0: get_tables: db=default pat=*
+19/10/22 20:51:21 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_tables: db=default pat=*	
+19/10/22 20:51:21 INFO CodeGenerator: Code generated in 257.973634 ms
+19/10/22 20:51:22 INFO SparkContext: Starting job: collect at utils.scala:44
+19/10/22 20:51:22 INFO DAGScheduler: Got job 0 (collect at utils.scala:44) with 1 output partitions
+19/10/22 20:51:22 INFO DAGScheduler: Final stage: ResultStage 0 (collect at utils.scala:44)
+19/10/22 20:51:22 INFO DAGScheduler: Parents of final stage: List()
+19/10/22 20:51:22 INFO DAGScheduler: Missing parents: List()
+19/10/22 20:51:22 INFO DAGScheduler: Submitting ResultStage 0 (MapPartitionsRDD[5] at map at utils.scala:41), which has no missing parents
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 8.7 KB, free 912.3 MB)
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 4.6 KB, free 912.3 MB)
+19/10/22 20:51:22 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on 127.0.0.1:46525 (size: 4.6 KB, free: 912.3 MB)
+19/10/22 20:51:22 INFO SparkContext: Created broadcast 0 from broadcast at DAGScheduler.scala:996
+19/10/22 20:51:22 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 0 (MapPartitionsRDD[5] at map at utils.scala:41)
+19/10/22 20:51:22 INFO TaskSchedulerImpl: Adding task set 0.0 with 1 tasks
+19/10/22 20:51:22 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0, localhost, executor driver, partition 0, PROCESS_LOCAL, 6041 bytes)
+19/10/22 20:51:22 INFO Executor: Running task 0.0 in stage 0.0 (TID 0)
+19/10/22 20:51:22 INFO Executor: Fetching spark://127.0.0.1:34209/jars/sparklyr-2.0-2.11.jar with timestamp 1571730675409
+19/10/22 20:51:22 INFO TransportClientFactory: Successfully created connection to /127.0.0.1:34209 after 12 ms (0 ms spent in bootstraps)
+19/10/22 20:51:22 INFO Utils: Fetching spark://127.0.0.1:34209/jars/sparklyr-2.0-2.11.jar to /tmp/spark-455a8a60-ba85-4a25-bb2b-1a815d98cc83/userFiles-ac6ec4d7-c4f6-45d2-8a56-949f5b7cb9fb/fetchFileTemp3950079957058087758.tmp
+19/10/22 20:51:22 INFO Executor: Adding file:/tmp/spark-455a8a60-ba85-4a25-bb2b-1a815d98cc83/userFiles-ac6ec4d7-c4f6-45d2-8a56-949f5b7cb9fb/sparklyr-2.0-2.11.jar to class loader
+19/10/22 20:51:22 INFO CodeGenerator: Code generated in 12.470276 ms
+19/10/22 20:51:22 INFO CodeGenerator: Code generated in 10.169836 ms
+19/10/22 20:51:22 INFO Executor: Finished task 0.0 in stage 0.0 (TID 0). 1231 bytes result sent to driver
+19/10/22 20:51:22 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 238 ms on localhost (executor driver) (1/1)
+19/10/22 20:51:22 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool 
+19/10/22 20:51:22 INFO DAGScheduler: ResultStage 0 (collect at utils.scala:44) finished in 0.256 s
+19/10/22 20:51:22 INFO DAGScheduler: Job 0 finished: collect at utils.scala:44, took 0.378393 s
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 237.2 KB, free 912.1 MB)
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 23.1 KB, free 912.0 MB)
+19/10/22 20:51:22 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on 127.0.0.1:46525 (size: 23.1 KB, free: 912.3 MB)
+19/10/22 20:51:22 INFO SparkContext: Created broadcast 1 from csv at NativeMethodAccessorImpl.java:0
+19/10/22 20:51:22 INFO FileInputFormat: Total input paths to process : 1
+19/10/22 20:51:22 INFO SparkContext: Starting job: csv at NativeMethodAccessorImpl.java:0
+19/10/22 20:51:22 INFO DAGScheduler: Got job 1 (csv at NativeMethodAccessorImpl.java:0) with 1 output partitions
+19/10/22 20:51:22 INFO DAGScheduler: Final stage: ResultStage 1 (csv at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:22 INFO DAGScheduler: Parents of final stage: List()
+19/10/22 20:51:22 INFO DAGScheduler: Missing parents: List()
+19/10/22 20:51:22 INFO DAGScheduler: Submitting ResultStage 1 (MapPartitionsRDD[8] at csv at NativeMethodAccessorImpl.java:0), which has no missing parents
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_2 stored as values in memory (estimated size 3.5 KB, free 912.0 MB)
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_2_piece0 stored as bytes in memory (estimated size 2.1 KB, free 912.0 MB)
+19/10/22 20:51:22 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on 127.0.0.1:46525 (size: 2.1 KB, free: 912.3 MB)
+19/10/22 20:51:22 INFO SparkContext: Created broadcast 2 from broadcast at DAGScheduler.scala:996
+19/10/22 20:51:22 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 1 (MapPartitionsRDD[8] at csv at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:22 INFO TaskSchedulerImpl: Adding task set 1.0 with 1 tasks
+19/10/22 20:51:22 INFO TaskSetManager: Starting task 0.0 in stage 1.0 (TID 1, localhost, executor driver, partition 0, PROCESS_LOCAL, 6059 bytes)
+19/10/22 20:51:22 INFO Executor: Running task 0.0 in stage 1.0 (TID 1)
+19/10/22 20:51:22 INFO HadoopRDD: Input split: file:/course/data.austintexas.gov/type-durn-dist.csv:0+33554432
+19/10/22 20:51:22 INFO deprecation: mapred.tip.id is deprecated. Instead, use mapreduce.task.id
+19/10/22 20:51:22 INFO deprecation: mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id
+19/10/22 20:51:22 INFO deprecation: mapred.task.is.map is deprecated. Instead, use mapreduce.task.ismap
+19/10/22 20:51:22 INFO deprecation: mapred.task.partition is deprecated. Instead, use mapreduce.task.partition
+19/10/22 20:51:22 INFO deprecation: mapred.job.id is deprecated. Instead, use mapreduce.job.id
+19/10/22 20:51:22 INFO Executor: Finished task 0.0 in stage 1.0 (TID 1). 1109 bytes result sent to driver
+19/10/22 20:51:22 INFO TaskSetManager: Finished task 0.0 in stage 1.0 (TID 1) in 30 ms on localhost (executor driver) (1/1)
+19/10/22 20:51:22 INFO TaskSchedulerImpl: Removed TaskSet 1.0, whose tasks have all completed, from pool 
+19/10/22 20:51:22 INFO DAGScheduler: ResultStage 1 (csv at NativeMethodAccessorImpl.java:0) finished in 0.031 s
+19/10/22 20:51:22 INFO DAGScheduler: Job 1 finished: csv at NativeMethodAccessorImpl.java:0, took 0.039916 s
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_3 stored as values in memory (estimated size 237.3 KB, free 911.8 MB)
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_3_piece0 stored as bytes in memory (estimated size 23.1 KB, free 911.8 MB)
+19/10/22 20:51:22 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on 127.0.0.1:46525 (size: 23.1 KB, free: 912.2 MB)
+19/10/22 20:51:22 INFO SparkContext: Created broadcast 3 from csv at NativeMethodAccessorImpl.java:0
+19/10/22 20:51:22 INFO FileInputFormat: Total input paths to process : 1
+19/10/22 20:51:22 INFO SparkContext: Starting job: csv at NativeMethodAccessorImpl.java:0
+19/10/22 20:51:22 INFO DAGScheduler: Got job 2 (csv at NativeMethodAccessorImpl.java:0) with 1 output partitions
+19/10/22 20:51:22 INFO DAGScheduler: Final stage: ResultStage 2 (csv at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:22 INFO DAGScheduler: Parents of final stage: List()
+19/10/22 20:51:22 INFO DAGScheduler: Missing parents: List()
+19/10/22 20:51:22 INFO DAGScheduler: Submitting ResultStage 2 (MapPartitionsRDD[11] at csv at NativeMethodAccessorImpl.java:0), which has no missing parents
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_4 stored as values in memory (estimated size 3.5 KB, free 911.8 MB)
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_4_piece0 stored as bytes in memory (estimated size 2.1 KB, free 911.8 MB)
+19/10/22 20:51:22 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on 127.0.0.1:46525 (size: 2.1 KB, free: 912.2 MB)
+19/10/22 20:51:22 INFO SparkContext: Created broadcast 4 from broadcast at DAGScheduler.scala:996
+19/10/22 20:51:22 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 2 (MapPartitionsRDD[11] at csv at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:22 INFO TaskSchedulerImpl: Adding task set 2.0 with 1 tasks
+19/10/22 20:51:22 INFO TaskSetManager: Starting task 0.0 in stage 2.0 (TID 2, localhost, executor driver, partition 0, PROCESS_LOCAL, 6059 bytes)
+19/10/22 20:51:22 INFO Executor: Running task 0.0 in stage 2.0 (TID 2)
+19/10/22 20:51:22 INFO HadoopRDD: Input split: file:/course/data.austintexas.gov/type-durn-dist.csv:0+33554432
+19/10/22 20:51:22 INFO Executor: Finished task 0.0 in stage 2.0 (TID 2). 1109 bytes result sent to driver
+19/10/22 20:51:22 INFO TaskSetManager: Finished task 0.0 in stage 2.0 (TID 2) in 12 ms on localhost (executor driver) (1/1)
+19/10/22 20:51:22 INFO TaskSchedulerImpl: Removed TaskSet 2.0, whose tasks have all completed, from pool 
+19/10/22 20:51:22 INFO DAGScheduler: ResultStage 2 (csv at NativeMethodAccessorImpl.java:0) finished in 0.015 s
+19/10/22 20:51:22 INFO DAGScheduler: Job 2 finished: csv at NativeMethodAccessorImpl.java:0, took 0.022524 s
+19/10/22 20:51:22 INFO SparkContext: Starting job: csv at NativeMethodAccessorImpl.java:0
+19/10/22 20:51:22 INFO DAGScheduler: Got job 3 (csv at NativeMethodAccessorImpl.java:0) with 4 output partitions
+19/10/22 20:51:22 INFO DAGScheduler: Final stage: ResultStage 3 (csv at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:22 INFO DAGScheduler: Parents of final stage: List()
+19/10/22 20:51:22 INFO DAGScheduler: Missing parents: List()
+19/10/22 20:51:22 INFO DAGScheduler: Submitting ResultStage 3 (MapPartitionsRDD[12] at csv at NativeMethodAccessorImpl.java:0), which has no missing parents
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_5 stored as values in memory (estimated size 7.2 KB, free 911.8 MB)
+19/10/22 20:51:22 INFO MemoryStore: Block broadcast_5_piece0 stored as bytes in memory (estimated size 4.7 KB, free 911.8 MB)
+19/10/22 20:51:22 INFO BlockManagerInfo: Added broadcast_5_piece0 in memory on 127.0.0.1:46525 (size: 4.7 KB, free: 912.2 MB)
+19/10/22 20:51:22 INFO SparkContext: Created broadcast 5 from broadcast at DAGScheduler.scala:996
+19/10/22 20:51:22 INFO DAGScheduler: Submitting 4 missing tasks from ResultStage 3 (MapPartitionsRDD[12] at csv at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:22 INFO TaskSchedulerImpl: Adding task set 3.0 with 4 tasks
+19/10/22 20:51:22 INFO TaskSetManager: Starting task 0.0 in stage 3.0 (TID 3, localhost, executor driver, partition 0, PROCESS_LOCAL, 6063 bytes)
+19/10/22 20:51:22 INFO TaskSetManager: Starting task 1.0 in stage 3.0 (TID 4, localhost, executor driver, partition 1, PROCESS_LOCAL, 6063 bytes)
+19/10/22 20:51:22 INFO TaskSetManager: Starting task 2.0 in stage 3.0 (TID 5, localhost, executor driver, partition 2, PROCESS_LOCAL, 6063 bytes)
+19/10/22 20:51:22 INFO TaskSetManager: Starting task 3.0 in stage 3.0 (TID 6, localhost, executor driver, partition 3, PROCESS_LOCAL, 6063 bytes)
+19/10/22 20:51:22 INFO Executor: Running task 0.0 in stage 3.0 (TID 3)
+19/10/22 20:51:22 INFO Executor: Running task 1.0 in stage 3.0 (TID 4)
+19/10/22 20:51:22 INFO Executor: Running task 2.0 in stage 3.0 (TID 5)
+19/10/22 20:51:22 INFO Executor: Running task 3.0 in stage 3.0 (TID 6)
+19/10/22 20:51:22 INFO HadoopRDD: Input split: file:/course/data.austintexas.gov/type-durn-dist.csv:100663296+6398790
+19/10/22 20:51:22 INFO HadoopRDD: Input split: file:/course/data.austintexas.gov/type-durn-dist.csv:67108864+33554432
+19/10/22 20:51:22 INFO HadoopRDD: Input split: file:/course/data.austintexas.gov/type-durn-dist.csv:33554432+33554432
+19/10/22 20:51:22 INFO HadoopRDD: Input split: file:/course/data.austintexas.gov/type-durn-dist.csv:0+33554432
+19/10/22 20:51:23 INFO ContextCleaner: Cleaned accumulator 0
+19/10/22 20:51:23 INFO ContextCleaner: Cleaned accumulator 1
+19/10/22 20:51:23 INFO BlockManagerInfo: Removed broadcast_0_piece0 on 127.0.0.1:46525 in memory (size: 4.6 KB, free: 912.2 MB)
+19/10/22 20:51:23 INFO BlockManagerInfo: Removed broadcast_2_piece0 on 127.0.0.1:46525 in memory (size: 2.1 KB, free: 912.2 MB)
+19/10/22 20:51:23 INFO BlockManagerInfo: Removed broadcast_4_piece0 on 127.0.0.1:46525 in memory (size: 2.1 KB, free: 912.3 MB)
+19/10/22 20:51:23 INFO Executor: Finished task 3.0 in stage 3.0 (TID 6). 1380 bytes result sent to driver
+19/10/22 20:51:23 INFO TaskSetManager: Finished task 3.0 in stage 3.0 (TID 6) in 512 ms on localhost (executor driver) (1/4)
+19/10/22 20:51:24 INFO Executor: Finished task 2.0 in stage 3.0 (TID 5). 1293 bytes result sent to driver
+19/10/22 20:51:24 INFO TaskSetManager: Finished task 2.0 in stage 3.0 (TID 5) in 1793 ms on localhost (executor driver) (2/4)
+19/10/22 20:51:24 INFO Executor: Finished task 0.0 in stage 3.0 (TID 3). 1293 bytes result sent to driver
+19/10/22 20:51:24 INFO TaskSetManager: Finished task 0.0 in stage 3.0 (TID 3) in 1814 ms on localhost (executor driver) (3/4)
+19/10/22 20:51:24 INFO Executor: Finished task 1.0 in stage 3.0 (TID 4). 1293 bytes result sent to driver
+19/10/22 20:51:24 INFO TaskSetManager: Finished task 1.0 in stage 3.0 (TID 4) in 1882 ms on localhost (executor driver) (4/4)
+19/10/22 20:51:24 INFO TaskSchedulerImpl: Removed TaskSet 3.0, whose tasks have all completed, from pool 
+19/10/22 20:51:24 INFO DAGScheduler: ResultStage 3 (csv at NativeMethodAccessorImpl.java:0) finished in 1.884 s
+19/10/22 20:51:24 INFO DAGScheduler: Job 3 finished: csv at NativeMethodAccessorImpl.java:0, took 1.890119 s
+19/10/22 20:51:24 INFO SparkSqlParser: Parsing command: SHOW TABLES
+19/10/22 20:51:24 INFO HiveMetaStore: 0: get_database: default
+19/10/22 20:51:24 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_database: default	
+19/10/22 20:51:24 INFO HiveMetaStore: 0: get_database: default
+19/10/22 20:51:24 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_database: default	
+19/10/22 20:51:24 INFO HiveMetaStore: 0: get_tables: db=default pat=*
+19/10/22 20:51:24 INFO audit: ugi=bole001	ip=unknown-ip-addr	cmd=get_tables: db=default pat=*	
+19/10/22 20:51:24 INFO SparkSqlParser: Parsing command: tripsSpark
+19/10/22 20:51:24 INFO SparkSqlParser: Parsing command: CACHE TABLE `tripsSpark`
+19/10/22 20:51:24 INFO SparkSqlParser: Parsing command: `tripsSpark`
+19/10/22 20:51:24 INFO FileSourceStrategy: Pruning directories with: 
+19/10/22 20:51:24 INFO FileSourceStrategy: Post-Scan Filters: 
+19/10/22 20:51:24 INFO FileSourceStrategy: Output Data Schema: struct<bicycle: string, 11491603: int, 1658: int ... 1 more fields>
+19/10/22 20:51:24 INFO FileSourceStrategy: Pushed Filters: 
+19/10/22 20:51:24 INFO CodeGenerator: Code generated in 8.48276 ms
+19/10/22 20:51:24 INFO MemoryStore: Block broadcast_6 stored as values in memory (estimated size 282.2 KB, free 911.5 MB)
+19/10/22 20:51:24 INFO MemoryStore: Block broadcast_6_piece0 stored as bytes in memory (estimated size 23.9 KB, free 911.5 MB)
+19/10/22 20:51:24 INFO BlockManagerInfo: Added broadcast_6_piece0 in memory on 127.0.0.1:46525 (size: 23.9 KB, free: 912.2 MB)
+19/10/22 20:51:24 INFO SparkContext: Created broadcast 6 from sql at NativeMethodAccessorImpl.java:0
+19/10/22 20:51:24 INFO FileSourceScanExec: Planning scan with bin packing, max size: 5562819 bytes, open cost is considered as scanning 4194304 bytes.
+19/10/22 20:51:25 INFO CodeGenerator: Code generated in 12.880035 ms
+19/10/22 20:51:25 INFO CodeGenerator: Code generated in 8.258387 ms
+19/10/22 20:51:25 INFO SparkContext: Starting job: sql at NativeMethodAccessorImpl.java:0
+19/10/22 20:51:25 INFO DAGScheduler: Registering RDD 20 (sql at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:25 INFO DAGScheduler: Got job 4 (sql at NativeMethodAccessorImpl.java:0) with 1 output partitions
+19/10/22 20:51:25 INFO DAGScheduler: Final stage: ResultStage 5 (sql at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:25 INFO DAGScheduler: Parents of final stage: List(ShuffleMapStage 4)
+19/10/22 20:51:25 INFO DAGScheduler: Missing parents: List(ShuffleMapStage 4)
+19/10/22 20:51:25 INFO DAGScheduler: Submitting ShuffleMapStage 4 (MapPartitionsRDD[20] at sql at NativeMethodAccessorImpl.java:0), which has no missing parents
+19/10/22 20:51:25 INFO MemoryStore: Block broadcast_7 stored as values in memory (estimated size 17.9 KB, free 911.5 MB)
+19/10/22 20:51:25 INFO MemoryStore: Block broadcast_7_piece0 stored as bytes in memory (estimated size 9.2 KB, free 911.5 MB)
+19/10/22 20:51:25 INFO BlockManagerInfo: Added broadcast_7_piece0 in memory on 127.0.0.1:46525 (size: 9.2 KB, free: 912.2 MB)
+19/10/22 20:51:25 INFO SparkContext: Created broadcast 7 from broadcast at DAGScheduler.scala:996
+19/10/22 20:51:25 INFO DAGScheduler: Submitting 20 missing tasks from ShuffleMapStage 4 (MapPartitionsRDD[20] at sql at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:25 INFO TaskSchedulerImpl: Adding task set 4.0 with 20 tasks
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 0.0 in stage 4.0 (TID 7, localhost, executor driver, partition 0, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 1.0 in stage 4.0 (TID 8, localhost, executor driver, partition 1, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 2.0 in stage 4.0 (TID 9, localhost, executor driver, partition 2, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 3.0 in stage 4.0 (TID 10, localhost, executor driver, partition 3, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 4.0 in stage 4.0 (TID 11, localhost, executor driver, partition 4, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 5.0 in stage 4.0 (TID 12, localhost, executor driver, partition 5, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 6.0 in stage 4.0 (TID 13, localhost, executor driver, partition 6, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 7.0 in stage 4.0 (TID 14, localhost, executor driver, partition 7, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 8.0 in stage 4.0 (TID 15, localhost, executor driver, partition 8, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 9.0 in stage 4.0 (TID 16, localhost, executor driver, partition 9, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 10.0 in stage 4.0 (TID 17, localhost, executor driver, partition 10, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 11.0 in stage 4.0 (TID 18, localhost, executor driver, partition 11, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 12.0 in stage 4.0 (TID 19, localhost, executor driver, partition 12, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 13.0 in stage 4.0 (TID 20, localhost, executor driver, partition 13, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 14.0 in stage 4.0 (TID 21, localhost, executor driver, partition 14, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 15.0 in stage 4.0 (TID 22, localhost, executor driver, partition 15, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 16.0 in stage 4.0 (TID 23, localhost, executor driver, partition 16, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 17.0 in stage 4.0 (TID 24, localhost, executor driver, partition 17, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 18.0 in stage 4.0 (TID 25, localhost, executor driver, partition 18, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO TaskSetManager: Starting task 19.0 in stage 4.0 (TID 26, localhost, executor driver, partition 19, PROCESS_LOCAL, 6593 bytes)
+19/10/22 20:51:25 INFO Executor: Running task 0.0 in stage 4.0 (TID 7)
+19/10/22 20:51:25 INFO Executor: Running task 2.0 in stage 4.0 (TID 9)
+19/10/22 20:51:25 INFO Executor: Running task 1.0 in stage 4.0 (TID 8)
+19/10/22 20:51:25 INFO Executor: Running task 3.0 in stage 4.0 (TID 10)
+19/10/22 20:51:25 INFO Executor: Running task 4.0 in stage 4.0 (TID 11)
+19/10/22 20:51:25 INFO Executor: Running task 5.0 in stage 4.0 (TID 12)
+19/10/22 20:51:25 INFO Executor: Running task 6.0 in stage 4.0 (TID 13)
+19/10/22 20:51:25 INFO Executor: Running task 7.0 in stage 4.0 (TID 14)
+19/10/22 20:51:25 INFO Executor: Running task 8.0 in stage 4.0 (TID 15)
+19/10/22 20:51:25 INFO Executor: Running task 9.0 in stage 4.0 (TID 16)
+19/10/22 20:51:25 INFO Executor: Running task 10.0 in stage 4.0 (TID 17)
+19/10/22 20:51:25 INFO Executor: Running task 11.0 in stage 4.0 (TID 18)
+19/10/22 20:51:25 INFO Executor: Running task 12.0 in stage 4.0 (TID 19)
+19/10/22 20:51:25 INFO Executor: Running task 13.0 in stage 4.0 (TID 20)
+19/10/22 20:51:25 INFO Executor: Running task 14.0 in stage 4.0 (TID 21)
+19/10/22 20:51:25 INFO Executor: Running task 15.0 in stage 4.0 (TID 22)
+19/10/22 20:51:25 INFO Executor: Running task 16.0 in stage 4.0 (TID 23)
+19/10/22 20:51:25 INFO Executor: Running task 17.0 in stage 4.0 (TID 24)
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 50065371-55628190, partition values: [empty row]
+19/10/22 20:51:25 INFO Executor: Running task 18.0 in stage 4.0 (TID 25)
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 5562819-11125638, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 0-5562819, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 33376914-38939733, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 38939733-44502552, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 22251276-27814095, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 11125638-16688457, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 44502552-50065371, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 16688457-22251276, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 61191009-66753828, partition values: [empty row]
+19/10/22 20:51:25 INFO Executor: Running task 19.0 in stage 4.0 (TID 26)
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 27814095-33376914, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 77879466-83442285, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 55628190-61191009, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 89005104-94567923, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 66753828-72316647, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 72316647-77879466, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 83442285-89005104, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 100130742-105693561, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 94567923-100130742, partition values: [empty row]
+19/10/22 20:51:25 INFO FileScanRDD: Reading File path: file:///course/data.austintexas.gov/type-durn-dist.csv, range: 105693561-107062086, partition values: [empty row]
+19/10/22 20:51:25 INFO CodeGenerator: Code generated in 13.006165 ms
+19/10/22 20:51:25 INFO ContextCleaner: Cleaned accumulator 270
+19/10/22 20:51:25 INFO MemoryStore: Block rdd_17_19 stored as values in memory (estimated size 637.3 KB, free 910.8 MB)
+19/10/22 20:51:25 INFO BlockManagerInfo: Added rdd_17_19 in memory on 127.0.0.1:46525 (size: 637.3 KB, free: 911.6 MB)
+19/10/22 20:51:25 INFO CodeGenerator: Code generated in 35.584611 ms
+19/10/22 20:51:25 INFO CodeGenerator: Code generated in 63.093916 ms
+19/10/22 20:51:26 INFO BlockManagerInfo: Removed broadcast_5_piece0 on 127.0.0.1:46525 in memory (size: 4.7 KB, free: 911.6 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Removed broadcast_3_piece0 on 127.0.0.1:46525 in memory (size: 23.1 KB, free: 911.6 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Removed broadcast_1_piece0 on 127.0.0.1:46525 in memory (size: 23.1 KB, free: 911.6 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 19.0 in stage 4.0 (TID 26). 3070 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 19.0 in stage 4.0 (TID 26) in 1094 ms on localhost (executor driver) (1/20)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_10 stored as values in memory (estimated size 2.5 MB, free 908.9 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_10 in memory on 127.0.0.1:46525 (size: 2.5 MB, free: 909.2 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_14 stored as values in memory (estimated size 2.5 MB, free 906.4 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_14 in memory on 127.0.0.1:46525 (size: 2.5 MB, free: 906.7 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_4 stored as values in memory (estimated size 2.6 MB, free 903.8 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_4 in memory on 127.0.0.1:46525 (size: 2.6 MB, free: 904.1 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_13 stored as values in memory (estimated size 2.5 MB, free 901.3 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_13 in memory on 127.0.0.1:46525 (size: 2.5 MB, free: 901.6 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 4.0 in stage 4.0 (TID 11). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 4.0 in stage 4.0 (TID 11) in 1549 ms on localhost (executor driver) (2/20)
+19/10/22 20:51:26 INFO Executor: Finished task 14.0 in stage 4.0 (TID 21). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 14.0 in stage 4.0 (TID 21) in 1544 ms on localhost (executor driver) (3/20)
+19/10/22 20:51:26 INFO Executor: Finished task 10.0 in stage 4.0 (TID 17). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 13.0 in stage 4.0 (TID 20). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 13.0 in stage 4.0 (TID 20) in 1546 ms on localhost (executor driver) (4/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 10.0 in stage 4.0 (TID 17) in 1552 ms on localhost (executor driver) (5/20)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_11 stored as values in memory (estimated size 2.5 MB, free 898.9 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_11 in memory on 127.0.0.1:46525 (size: 2.5 MB, free: 899.1 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_7 stored as values in memory (estimated size 2.5 MB, free 896.4 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_7 in memory on 127.0.0.1:46525 (size: 2.5 MB, free: 896.7 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_3 stored as values in memory (estimated size 2.6 MB, free 893.7 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_3 in memory on 127.0.0.1:46525 (size: 2.6 MB, free: 894.0 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_2 stored as values in memory (estimated size 2.7 MB, free 891.1 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 11.0 in stage 4.0 (TID 18). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_2 in memory on 127.0.0.1:46525 (size: 2.7 MB, free: 891.3 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_5 stored as values in memory (estimated size 2.6 MB, free 888.5 MB)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 11.0 in stage 4.0 (TID 18) in 1572 ms on localhost (executor driver) (6/20)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_5 in memory on 127.0.0.1:46525 (size: 2.6 MB, free: 888.8 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 7.0 in stage 4.0 (TID 14). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 7.0 in stage 4.0 (TID 14) in 1582 ms on localhost (executor driver) (7/20)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_18 stored as values in memory (estimated size 2.5 MB, free 886.0 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_18 in memory on 127.0.0.1:46525 (size: 2.5 MB, free: 886.3 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 3.0 in stage 4.0 (TID 10). 3070 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 2.0 in stage 4.0 (TID 9). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 2.0 in stage 4.0 (TID 9) in 1587 ms on localhost (executor driver) (8/20)
+19/10/22 20:51:26 INFO Executor: Finished task 5.0 in stage 4.0 (TID 12). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 5.0 in stage 4.0 (TID 12) in 1588 ms on localhost (executor driver) (9/20)
+19/10/22 20:51:26 INFO Executor: Finished task 18.0 in stage 4.0 (TID 25). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 3.0 in stage 4.0 (TID 10) in 1590 ms on localhost (executor driver) (10/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 18.0 in stage 4.0 (TID 25) in 1581 ms on localhost (executor driver) (11/20)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_15 stored as values in memory (estimated size 2.5 MB, free 883.6 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_15 in memory on 127.0.0.1:46525 (size: 2.5 MB, free: 883.9 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_0 stored as values in memory (estimated size 2.6 MB, free 881.0 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_0 in memory on 127.0.0.1:46525 (size: 2.6 MB, free: 881.3 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 15.0 in stage 4.0 (TID 22). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 0.0 in stage 4.0 (TID 7). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 15.0 in stage 4.0 (TID 22) in 1592 ms on localhost (executor driver) (12/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 0.0 in stage 4.0 (TID 7) in 1604 ms on localhost (executor driver) (13/20)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_1 stored as values in memory (estimated size 2.6 MB, free 878.3 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_1 in memory on 127.0.0.1:46525 (size: 2.6 MB, free: 878.6 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_12 stored as values in memory (estimated size 2.5 MB, free 875.8 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_12 in memory on 127.0.0.1:46525 (size: 2.5 MB, free: 876.1 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_16 stored as values in memory (estimated size 2.6 MB, free 873.2 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 1.0 in stage 4.0 (TID 8). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_16 in memory on 127.0.0.1:46525 (size: 2.6 MB, free: 873.5 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 12.0 in stage 4.0 (TID 19). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 1.0 in stage 4.0 (TID 8) in 1612 ms on localhost (executor driver) (14/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 12.0 in stage 4.0 (TID 19) in 1606 ms on localhost (executor driver) (15/20)
+19/10/22 20:51:26 INFO Executor: Finished task 16.0 in stage 4.0 (TID 23). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 16.0 in stage 4.0 (TID 23) in 1607 ms on localhost (executor driver) (16/20)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_6 stored as values in memory (estimated size 2.6 MB, free 870.6 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_6 in memory on 127.0.0.1:46525 (size: 2.6 MB, free: 870.9 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_8 stored as values in memory (estimated size 2.4 MB, free 868.2 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_8 in memory on 127.0.0.1:46525 (size: 2.4 MB, free: 868.5 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 6.0 in stage 4.0 (TID 13). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 6.0 in stage 4.0 (TID 13) in 1619 ms on localhost (executor driver) (17/20)
+19/10/22 20:51:26 INFO Executor: Finished task 8.0 in stage 4.0 (TID 15). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 8.0 in stage 4.0 (TID 15) in 1619 ms on localhost (executor driver) (18/20)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_9 stored as values in memory (estimated size 2.6 MB, free 865.6 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_9 in memory on 127.0.0.1:46525 (size: 2.6 MB, free: 865.9 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 9.0 in stage 4.0 (TID 16). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 9.0 in stage 4.0 (TID 16) in 1643 ms on localhost (executor driver) (19/20)
+19/10/22 20:51:26 INFO MemoryStore: Block rdd_17_17 stored as values in memory (estimated size 2.5 MB, free 863.1 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added rdd_17_17 in memory on 127.0.0.1:46525 (size: 2.5 MB, free: 863.4 MB)
+19/10/22 20:51:26 INFO Executor: Finished task 17.0 in stage 4.0 (TID 24). 2983 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 17.0 in stage 4.0 (TID 24) in 1644 ms on localhost (executor driver) (20/20)
+19/10/22 20:51:26 INFO TaskSchedulerImpl: Removed TaskSet 4.0, whose tasks have all completed, from pool 
+19/10/22 20:51:26 INFO DAGScheduler: ShuffleMapStage 4 (sql at NativeMethodAccessorImpl.java:0) finished in 1.658 s
+19/10/22 20:51:26 INFO DAGScheduler: looking for newly runnable stages
+19/10/22 20:51:26 INFO DAGScheduler: running: Set()
+19/10/22 20:51:26 INFO DAGScheduler: waiting: Set(ResultStage 5)
+19/10/22 20:51:26 INFO DAGScheduler: failed: Set()
+19/10/22 20:51:26 INFO DAGScheduler: Submitting ResultStage 5 (MapPartitionsRDD[23] at sql at NativeMethodAccessorImpl.java:0), which has no missing parents
+19/10/22 20:51:26 INFO MemoryStore: Block broadcast_8 stored as values in memory (estimated size 7.0 KB, free 863.1 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block broadcast_8_piece0 stored as bytes in memory (estimated size 3.7 KB, free 863.1 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added broadcast_8_piece0 in memory on 127.0.0.1:46525 (size: 3.7 KB, free: 863.4 MB)
+19/10/22 20:51:26 INFO SparkContext: Created broadcast 8 from broadcast at DAGScheduler.scala:996
+19/10/22 20:51:26 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 5 (MapPartitionsRDD[23] at sql at NativeMethodAccessorImpl.java:0)
+19/10/22 20:51:26 INFO TaskSchedulerImpl: Adding task set 5.0 with 1 tasks
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 0.0 in stage 5.0 (TID 27, localhost, executor driver, partition 0, ANY, 5953 bytes)
+19/10/22 20:51:26 INFO Executor: Running task 0.0 in stage 5.0 (TID 27)
+19/10/22 20:51:26 INFO ShuffleBlockFetcherIterator: Getting 20 non-empty blocks out of 20 blocks
+19/10/22 20:51:26 INFO ShuffleBlockFetcherIterator: Started 0 remote fetches in 4 ms
+19/10/22 20:51:26 INFO Executor: Finished task 0.0 in stage 5.0 (TID 27). 2042 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 0.0 in stage 5.0 (TID 27) in 30 ms on localhost (executor driver) (1/1)
+19/10/22 20:51:26 INFO TaskSchedulerImpl: Removed TaskSet 5.0, whose tasks have all completed, from pool 
+19/10/22 20:51:26 INFO DAGScheduler: ResultStage 5 (sql at NativeMethodAccessorImpl.java:0) finished in 0.031 s
+19/10/22 20:51:26 INFO DAGScheduler: Job 4 finished: sql at NativeMethodAccessorImpl.java:0, took 1.732199 s
+19/10/22 20:51:26 INFO CodeGenerator: Code generated in 6.194876 ms
+19/10/22 20:51:26 INFO SparkSqlParser: Parsing command: SELECT count(*) FROM `tripsSpark`
+19/10/22 20:51:26 INFO SparkContext: Starting job: collect at utils.scala:204
+19/10/22 20:51:26 INFO DAGScheduler: Registering RDD 27 (collect at utils.scala:204)
+19/10/22 20:51:26 INFO DAGScheduler: Got job 5 (collect at utils.scala:204) with 1 output partitions
+19/10/22 20:51:26 INFO DAGScheduler: Final stage: ResultStage 7 (collect at utils.scala:204)
+19/10/22 20:51:26 INFO DAGScheduler: Parents of final stage: List(ShuffleMapStage 6)
+19/10/22 20:51:26 INFO DAGScheduler: Missing parents: List(ShuffleMapStage 6)
+19/10/22 20:51:26 INFO DAGScheduler: Submitting ShuffleMapStage 6 (MapPartitionsRDD[27] at collect at utils.scala:204), which has no missing parents
+19/10/22 20:51:26 INFO MemoryStore: Block broadcast_9 stored as values in memory (estimated size 17.9 KB, free 863.1 MB)
+19/10/22 20:51:26 INFO MemoryStore: Block broadcast_9_piece0 stored as bytes in memory (estimated size 9.2 KB, free 863.1 MB)
+19/10/22 20:51:26 INFO BlockManagerInfo: Added broadcast_9_piece0 in memory on 127.0.0.1:46525 (size: 9.2 KB, free: 863.4 MB)
+19/10/22 20:51:26 INFO SparkContext: Created broadcast 9 from broadcast at DAGScheduler.scala:996
+19/10/22 20:51:26 INFO DAGScheduler: Submitting 20 missing tasks from ShuffleMapStage 6 (MapPartitionsRDD[27] at collect at utils.scala:204)
+19/10/22 20:51:26 INFO TaskSchedulerImpl: Adding task set 6.0 with 20 tasks
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 0.0 in stage 6.0 (TID 28, localhost, executor driver, partition 0, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 1.0 in stage 6.0 (TID 29, localhost, executor driver, partition 1, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 2.0 in stage 6.0 (TID 30, localhost, executor driver, partition 2, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 3.0 in stage 6.0 (TID 31, localhost, executor driver, partition 3, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 4.0 in stage 6.0 (TID 32, localhost, executor driver, partition 4, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 5.0 in stage 6.0 (TID 33, localhost, executor driver, partition 5, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 6.0 in stage 6.0 (TID 34, localhost, executor driver, partition 6, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 7.0 in stage 6.0 (TID 35, localhost, executor driver, partition 7, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 8.0 in stage 6.0 (TID 36, localhost, executor driver, partition 8, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 9.0 in stage 6.0 (TID 37, localhost, executor driver, partition 9, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 10.0 in stage 6.0 (TID 38, localhost, executor driver, partition 10, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 11.0 in stage 6.0 (TID 39, localhost, executor driver, partition 11, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 12.0 in stage 6.0 (TID 40, localhost, executor driver, partition 12, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 13.0 in stage 6.0 (TID 41, localhost, executor driver, partition 13, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 14.0 in stage 6.0 (TID 42, localhost, executor driver, partition 14, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 15.0 in stage 6.0 (TID 43, localhost, executor driver, partition 15, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 16.0 in stage 6.0 (TID 44, localhost, executor driver, partition 16, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 17.0 in stage 6.0 (TID 45, localhost, executor driver, partition 17, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 18.0 in stage 6.0 (TID 46, localhost, executor driver, partition 18, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO TaskSetManager: Starting task 19.0 in stage 6.0 (TID 47, localhost, executor driver, partition 19, PROCESS_LOCAL, 6585 bytes)
+19/10/22 20:51:26 INFO Executor: Running task 3.0 in stage 6.0 (TID 31)
+19/10/22 20:51:26 INFO Executor: Running task 5.0 in stage 6.0 (TID 33)
+19/10/22 20:51:26 INFO Executor: Running task 15.0 in stage 6.0 (TID 43)
+19/10/22 20:51:26 INFO Executor: Running task 6.0 in stage 6.0 (TID 34)
+19/10/22 20:51:26 INFO Executor: Running task 12.0 in stage 6.0 (TID 40)
+19/10/22 20:51:26 INFO Executor: Running task 2.0 in stage 6.0 (TID 30)
+19/10/22 20:51:26 INFO Executor: Running task 10.0 in stage 6.0 (TID 38)
+19/10/22 20:51:26 INFO Executor: Running task 9.0 in stage 6.0 (TID 37)
+19/10/22 20:51:26 INFO Executor: Running task 14.0 in stage 6.0 (TID 42)
+19/10/22 20:51:26 INFO Executor: Running task 8.0 in stage 6.0 (TID 36)
+19/10/22 20:51:26 INFO Executor: Running task 4.0 in stage 6.0 (TID 32)
+19/10/22 20:51:26 INFO Executor: Running task 0.0 in stage 6.0 (TID 28)
+19/10/22 20:51:26 INFO Executor: Running task 17.0 in stage 6.0 (TID 45)
+19/10/22 20:51:26 INFO Executor: Running task 1.0 in stage 6.0 (TID 29)
+19/10/22 20:51:26 INFO Executor: Running task 13.0 in stage 6.0 (TID 41)
+19/10/22 20:51:26 INFO Executor: Running task 7.0 in stage 6.0 (TID 35)
+19/10/22 20:51:26 INFO Executor: Running task 16.0 in stage 6.0 (TID 44)
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_10 locally
+19/10/22 20:51:26 INFO Executor: Running task 11.0 in stage 6.0 (TID 39)
+19/10/22 20:51:26 INFO Executor: Running task 19.0 in stage 6.0 (TID 47)
+19/10/22 20:51:26 INFO Executor: Running task 18.0 in stage 6.0 (TID 46)
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_3 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_14 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_4 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_17 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_13 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_11 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_6 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_8 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_16 locally
+19/10/22 20:51:26 INFO Executor: Finished task 10.0 in stage 6.0 (TID 38). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 14.0 in stage 6.0 (TID 42). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 4.0 in stage 6.0 (TID 32). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_2 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_7 locally
+19/10/22 20:51:26 INFO Executor: Finished task 13.0 in stage 6.0 (TID 41). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 8.0 in stage 6.0 (TID 36). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_0 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_5 locally
+19/10/22 20:51:26 INFO Executor: Finished task 11.0 in stage 6.0 (TID 39). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 2.0 in stage 6.0 (TID 30). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 10.0 in stage 6.0 (TID 38) in 13 ms on localhost (executor driver) (1/20)
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_18 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_15 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_9 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_19 locally
+19/10/22 20:51:26 INFO Executor: Finished task 3.0 in stage 6.0 (TID 31). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_1 locally
+19/10/22 20:51:26 INFO BlockManager: Found block rdd_17_12 locally
+19/10/22 20:51:26 INFO Executor: Finished task 16.0 in stage 6.0 (TID 44). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 14.0 in stage 6.0 (TID 42) in 14 ms on localhost (executor driver) (2/20)
+19/10/22 20:51:26 INFO Executor: Finished task 5.0 in stage 6.0 (TID 33). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 4.0 in stage 6.0 (TID 32) in 19 ms on localhost (executor driver) (3/20)
+19/10/22 20:51:26 INFO Executor: Finished task 7.0 in stage 6.0 (TID 35). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 13.0 in stage 6.0 (TID 41) in 17 ms on localhost (executor driver) (4/20)
+19/10/22 20:51:26 INFO Executor: Finished task 6.0 in stage 6.0 (TID 34). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 11.0 in stage 6.0 (TID 39) in 18 ms on localhost (executor driver) (5/20)
+19/10/22 20:51:26 INFO Executor: Finished task 17.0 in stage 6.0 (TID 45). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 8.0 in stage 6.0 (TID 36) in 19 ms on localhost (executor driver) (6/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 3.0 in stage 6.0 (TID 31) in 21 ms on localhost (executor driver) (7/20)
+19/10/22 20:51:26 INFO Executor: Finished task 9.0 in stage 6.0 (TID 37). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 18.0 in stage 6.0 (TID 46). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 0.0 in stage 6.0 (TID 28). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO Executor: Finished task 19.0 in stage 6.0 (TID 47). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 2.0 in stage 6.0 (TID 30) in 22 ms on localhost (executor driver) (8/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 7.0 in stage 6.0 (TID 35) in 20 ms on localhost (executor driver) (9/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 5.0 in stage 6.0 (TID 33) in 20 ms on localhost (executor driver) (10/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 16.0 in stage 6.0 (TID 44) in 19 ms on localhost (executor driver) (11/20)
+19/10/22 20:51:26 INFO Executor: Finished task 1.0 in stage 6.0 (TID 29). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 6.0 in stage 6.0 (TID 34) in 21 ms on localhost (executor driver) (12/20)
+19/10/22 20:51:26 INFO Executor: Finished task 15.0 in stage 6.0 (TID 43). 2188 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 17.0 in stage 6.0 (TID 45) in 18 ms on localhost (executor driver) (13/20)
+19/10/22 20:51:26 INFO Executor: Finished task 12.0 in stage 6.0 (TID 40). 2275 bytes result sent to driver
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 9.0 in stage 6.0 (TID 37) in 20 ms on localhost (executor driver) (14/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 18.0 in stage 6.0 (TID 46) in 18 ms on localhost (executor driver) (15/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 0.0 in stage 6.0 (TID 28) in 25 ms on localhost (executor driver) (16/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 19.0 in stage 6.0 (TID 47) in 19 ms on localhost (executor driver) (17/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 1.0 in stage 6.0 (TID 29) in 24 ms on localhost (executor driver) (18/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 15.0 in stage 6.0 (TID 43) in 20 ms on localhost (executor driver) (19/20)
+19/10/22 20:51:26 INFO TaskSetManager: Finished task 12.0 in stage 6.0 (TID 40) in 21 ms on localhost (executor driver) (20/20)
+19/10/22 20:51:26 INFO TaskSchedulerImpl: Removed TaskSet 6.0, whose tasks have all completed, from pool 
+19/10/22 20:51:26 INFO DAGScheduler: ShuffleMapStage 6 (collect at utils.scala:204) finished in 0.028 s
+19/10/22 20:51:26 INFO DAGScheduler: looking for newly runnable stages
+19/10/22 20:51:26 INFO DAGScheduler: running: Set()
+19/10/22 20:51:26 INFO DAGScheduler: waiting: Set(ResultStage 7)
+19/10/22 20:51:26 INFO DAGScheduler: failed: Set()
+19/10/22 20:51:26 INFO DAGScheduler: Submitting ResultStage 7 (MapPartitionsRDD[30] at collect at utils.scala:204), which has no missing parents
+19/10/22 20:51:26 INFO MemoryStore: Block broadcast_10 stored as values in memory (estimated size 7.0 KB, free 863.1 MB)
+19/10/22 20:51:27 INFO MemoryStore: Block broadcast_10_piece0 stored as bytes in memory (estimated size 3.7 KB, free 863.1 MB)
+19/10/22 20:51:27 INFO BlockManagerInfo: Added broadcast_10_piece0 in memory on 127.0.0.1:46525 (size: 3.7 KB, free: 863.4 MB)
+19/10/22 20:51:27 INFO SparkContext: Created broadcast 10 from broadcast at DAGScheduler.scala:996
+19/10/22 20:51:27 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 7 (MapPartitionsRDD[30] at collect at utils.scala:204)
+19/10/22 20:51:27 INFO TaskSchedulerImpl: Adding task set 7.0 with 1 tasks
+19/10/22 20:51:27 INFO TaskSetManager: Starting task 0.0 in stage 7.0 (TID 48, localhost, executor driver, partition 0, ANY, 5945 bytes)
+19/10/22 20:51:27 INFO Executor: Running task 0.0 in stage 7.0 (TID 48)
+19/10/22 20:51:27 INFO ShuffleBlockFetcherIterator: Getting 20 non-empty blocks out of 20 blocks
+19/10/22 20:51:27 INFO ShuffleBlockFetcherIterator: Started 0 remote fetches in 0 ms
+19/10/22 20:51:27 INFO Executor: Finished task 0.0 in stage 7.0 (TID 48). 2042 bytes result sent to driver
+19/10/22 20:51:27 INFO TaskSetManager: Finished task 0.0 in stage 7.0 (TID 48) in 8 ms on localhost (executor driver) (1/1)
+19/10/22 20:51:27 INFO TaskSchedulerImpl: Removed TaskSet 7.0, whose tasks have all completed, from pool 
+19/10/22 20:51:27 INFO DAGScheduler: ResultStage 7 (collect at utils.scala:204) finished in 0.009 s
+19/10/22 20:51:27 INFO DAGScheduler: Job 5 finished: collect at utils.scala:204, took 0.055960 s
+19/10/22 20:51:27 INFO SparkSqlParser: Parsing command: SELECT *
+FROM `tripsSpark` AS `zzz1`
+WHERE (0 = 1)
+19/10/22 20:51:28 INFO SparkContext: Invoking stop() from shutdown hook
+19/10/22 20:51:28 INFO SparkUI: Stopped Spark web UI at http://127.0.0.1:4041
+19/10/22 20:51:28 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+19/10/22 20:51:28 INFO MemoryStore: MemoryStore cleared
+19/10/22 20:51:28 INFO BlockManager: BlockManager stopped
+19/10/22 20:51:28 INFO BlockManagerMaster: BlockManagerMaster stopped
+19/10/22 20:51:28 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+19/10/22 20:51:28 INFO SparkContext: Successfully stopped SparkContext
+19/10/22 20:51:28 INFO ShutdownHookManager: Shutdown hook called
+19/10/22 20:51:28 INFO ShutdownHookManager: Deleting directory /tmp/spark-455a8a60-ba85-4a25-bb2b-1a815d98cc83
