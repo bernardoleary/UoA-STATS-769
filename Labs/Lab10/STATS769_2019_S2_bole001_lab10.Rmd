@@ -14,24 +14,92 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Dataset is the same as what we used for Lab06, Lab07, Lab08 and Lab09 but with all columns removed except for Type, Distance and Duration. The data files type-durn-dist.csv, distance-duration.csv and Dockless_Vehicle_Trips.csv have the exact same number of rows of data, with the exception that there is no header and no missing data in the forst row with type-durn-dist.csv and distance-duration.csv - so these files have two less rows (6532457 in total).
 
+# Import data
+
+Use three approaches to import data.
+
+## Import using data.table::fread
+
+Print size of imported object using fread, at approximatey 104520976 bytes it is relatively large as expected.
 
 ```{r}
 # Import the necessary libraries
 library(data.table)
-library(rmr2)
 
-# Get the trips
+# Get the trips using standard approach
 tripsDT <- fread("/course/data.austintexas.gov/type-durn-dist.csv")
+object.size(tripsDT)
+```
 
+## Define input format for file
+
+To be used with the map/reduce function - show size of object, which is approximately 38320 bytes. Uncertain why we do this at this stage as there is not data in the object.
+
+```{r}
 # Create the format
 tripsCSV <- make.input.format("csv", sep=",", skip=1, stringsAsFactors=FALSE, col.names=c("Type","Duration","Distance"))
+object.size(tripsCSV)
+```
 
+## Import data using Map/Reduce (NOT WORKING)
+
+Getting the folloing error when I run this function:
 
 ```
+Error in system(final.command, intern = TRUE) :
+  running command '/course/hadoop/hadoop-3.2.0/bin/hadoop jar /course/hadoop/hadoop-3.2.0/share/hadoop/tools/lib/hadoop-streaming-3.2.0.jar    -D     'stream.map.output=typedbytes'     -D     'stream.reduce.input=typedbytes'     -D     'stream.reduce.output=typedbytes'     -D     'mapred.reduce.tasks=0'     -D     'mapreduce.map.java.opts=-Xmx400M'     -D     'mapreduce.reduce.java.opts=-Xmx400M'     -files     '/course/hadoop-tmp/Rtmp2tfe0L/rmr-local-env4aaf7a1e29c0,/course/hadoop-tmp/Rtmp2tfe0L/rmr-global-env4aaf4deda88d,/course/hadoop-tmp/Rtmp2tfe0L/rmr-streaming-map4aaf79fa1102'     -input     '/course/data.austintexas.gov/type-durn-dist.csv'     -output     '/tmp/file4aaf5110d105'     -mapper     'Rscript --vanilla ./rmr-streaming-map4aaf79fa1102'        -outputformat     'org.apache.hadoop.mapred.SequenceFileOutputFormat'   2>&1' had status 1
+2019-10-22 20:06:41,600 INFO Configuration.deprecation: io.bytes.per.checksum is deprecated. Instead, use dfs.bytes-per-checksum
+Deleted /tmp/file4aaf2ec5b79e
+```
+
+So commented out for the time being.
+
+```{r}
+# Import library
+library(rmr2)
+# Set Java environment variables
+## Sys.setenv(JAVA_HOME="/usr/lib/jvm/default-java")
+Sys.setenv(JAVA_HOME = "/usr/lib/jvm/java-8-openjdk-amd64/")
+Sys.setenv(HADOOP_CMD="/course/hadoop/hadoop-3.2.0/bin/hadoop")
+Sys.setenv(HADOOP_STREAMING="/course/hadoop/hadoop-3.2.0/share/hadoop/tools/lib/hadoop-streaming-3.2.0.jar")
+
+# Import adata
+#oldwd <- setwd(tempdir())
+#tripsMR <- mapreduce(input="/course/data.austintexas.gov/type-durn-dist.csv",
+#                    input.format=tripsCSV,
+#                    map=function(k, v) cbind(v, v^2),
+#                    verbose=FALSE)
+#setwd(oldwd)
+#kv.tripsMR <- from.dfs(result)
+#kv.tripsMR$key
+#head(kv.tripsMR$val)
+#tail(kv.tripsMR$val)
+#object.size(tripsMR)
+```
+
+## Import using Spark
+
+The object size is far smaller than that for the tripsDT variable at approximately 9904 bytes. This is perhaps because the tripsSpark is a pointer to an object being held by the Spark runtime, whereas the tripsDT is a pure R object holding the data directly.
+
+```{r}
+# Get library and set environmnet variables
+Sys.setenv(JAVA_HOME = "/usr/lib/jvm/java-8-openjdk-amd64/")
+sc <- spark_connect(master = "local", spark_home="/course/spark/spark-2.1.0-bin-hadoop2.7")
+library(sparklyr)
+library(dplyr)
+
+# Import data
+tripsSpark <- spark_read_csv(sc, name='tripsSpark', path="/course/data.austintexas.gov/type-durn-dist.csv", header=TRUE, delimiter=",")
+object.size(tripsSpark)
+```
+
+# Tasks 2/3/4
+
+Incomplete. Unfortunately have been able to complete these remaining tasks due to commitments with my job.
 
 # Summary and Conclusion
 
-It appears as though as processing is increasingly parallelised, processing time decreases, although there were some discrepacies with this as the mclapply function would sometimes run much longer than sapply.
+Although I have been unable to get to most of the tasks in the lab, and have had trouble running the Map/Reduce function, it appears that leveraging purpose-built software from outside of the R environment using purpose-built streaming and parallelising technology has distinct benefits for Data Science purposes. 
 
-Although there are overheads accumulated by using parallel approach, such as the need to export variables and data structures to shared memory space so they can be accessed in parallel, the benefits are clear if you are using the variables and data structure over-and-over and they are not oeften required to be loaded back into shared memory space.
+I will certainly explore these technologies (Spark and Hadoop) in more detail prior to the exam, when I have more time to do so, and to make sure that I am prepared to answer further questions about them.
 
