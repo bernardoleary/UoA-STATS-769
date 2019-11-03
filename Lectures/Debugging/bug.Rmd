@@ -1,0 +1,11 @@
+
+# Debugging R Markdown Documents
+
+```{r echo=FALSE}
+source("01_debugging_spartan.R")
+```
+
+```{r}
+get_climates()
+```
+

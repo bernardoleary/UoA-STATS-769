@@ -1,0 +1,287 @@
+
+# STATS 769 Lab 10
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(comment=NA)
+```
+
+This lab is focused on high-performance computing.  We will work
+with both Hadoop MapReduce and Apache Spark.  We will also work with
+the data in R using 'data.table' for comparison and to check that the 
+results match.
+
+```{r message=FALSE}
+library(data.table)
+```
+
+```{r message=FALSE}
+library(rmr2)
+Sys.setenv(JAVA_HOME = "/usr/lib/jvm/java-8-openjdk-amd64/")
+Sys.setenv(HADOOP_CMD="/course/hadoop/hadoop-3.2.0/bin/hadoop")
+Sys.setenv(HADOOP_STREAMING="/course/hadoop/hadoop-3.2.0/share/hadoop/tools/lib/hadoop-streaming-3.2.0.jar")
+```
+
+```{r message=FALSE}
+library(sparklyr)
+Sys.setenv(JAVA_HOME = "/usr/lib/jvm/java-8-openjdk-amd64/")
+sc <- spark_connect(master = "local",
+                    spark_home="/course/spark/spark-2.1.0-bin-hadoop2.7")
+```
+
+For manipulating data that is in Spark storage, we will also need the
+'dplyr' package.
+
+```{r message=FALSE}
+library(dplyr)
+```
+
+## The Data
+
+The data set is a 100Mb CSV file containing roughly 6.5 million
+electric vehicle trips.  There are three variables:
+VehicleType, TripDuration, and TripDistance.
+
+```{bash echo=FALSE, eval=FALSE}
+awk -F, -e 'NR > 2 { print($3 "," $4 "," $5) }' /course/data.austintexas.gov/Dockless_Vehicle_Trips.csv > /course/data.austintexas.gov/type-durn-dist.csv
+```
+
+```{bash}
+ls -lh /course/data.austintexas.gov/type-durn-dist.csv
+```
+
+```{bash}
+wc -l /course/data.austintexas.gov/type-durn-dist.csv
+```
+
+```{bash}
+head /course/data.austintexas.gov/type-durn-dist.csv
+```
+
+## Import
+
+First, we read the CSV file into R using `data.table::fread()`.
+This is nice and fast, and will also be nice and fast for
+tidying and transforming the data, though it will require us to write
+some non-standard syntax.
+The result is a large R object, reflecting the fact
+ that all of the data values are stored 
+within R.
+
+```{r message=FALSE}
+tripsDT <- fread("/course/data.austintexas.gov/type-durn-dist.csv",
+                 col.names=c("VehicleType", "TripDuration", "TripDistance"))
+head(tripsDT)
+object.size(tripsDT)
+```
+
+Importing the data has a different meaning for Hadoop MapReduce and 
+Apache Spark.  In both cases, importing the data means loading the data
+into another storage system.
+
+In the case of Hadoop MapReduce, for now we just define an "input format"
+that will be used later to read the data.  This is merely a 
+description of the data, not the data values themselves, so 
+this is a very small R object.
+
+```{r}
+tripCSV <- make.input.format("csv", "text", sep=",", stringsAsFactors=FALSE,
+                             col.names=c("VehicleType",
+                                         "TripDuration",
+                                         "TripDistance"))
+object.size(tripCSV)
+```
+
+The following code loads the CSV file into the Spark storage system.
+The object that is created in R is not large - it is just a reference
+to the full data set in the Spark storage system.
+
+```{r}
+tripsSDF <- 
+  spark_read_csv(sc, "trips_csv", 
+                 path="file:///course/data.austintexas.gov/type-durn-dist.csv",
+                 header=FALSE,
+                 columns=c("VehicleType", "TripDuration", "TripDistance"))
+head(tripsSDF)
+object.size(tripsSDF)
+```
+
+## Tidy and Transform
+
+We perform the usual subset and transformation of the data,
+excluding non-positive durations and distances, and
+logging both duration and distance.
+
+The 'data.table' version is fast if a little weird-looking.
+The result is an even larger R object.
+
+```{r}
+tripsDT[TripDuration > 0 & TripDistance > 0,
+        c("logDuration", "logDistance") := 
+            list(log(TripDuration), log(TripDistance))]
+head(tripsDT)
+object.size(tripsDT)
+```
+
+The following code performs a similar operation on the data in
+Spark storage.  Again, the R object that is returned is just
+a reference to the result (a very small R object). 
+
+```{r}
+tripSubset <- tripsSDF %>% 
+    filter(TripDuration > 0 & TripDistance > 0) %>%
+    mutate(logDuration=log(TripDuration), logDistance=log(TripDistance))
+head(tripSubset)
+object.size(tripSubset)
+```
+
+For Hadoop MapReduce, we will delay this step until we are
+actually calculating numeric summaries.
+
+## Data summaries
+
+In this section, we calculate mean durations and distances for
+bicycles compared to scooters (only for trips with positive duration
+and distance).
+
+The 'data.table' version is fast, but weird-looking.
+NOTE the use of the `=` operator (rather than the `:=` operator)
+in the `j` argument.
+
+```{r}
+averagesDT <- tripsDT[TripDuration > 0 & TripDistance > 0,
+                      list(meanDuration=mean(TripDuration, na.rm=TRUE), 
+                           meanDistance=mean(TripDistance, na.rm=TRUE)),
+                      by=VehicleType]
+averagesDT
+```
+
+The following code performs the same calculation using the
+Hadoop MapReduce framework.  The `input` is the original CSV file,
+accompanied by the `input.format` description that we created earlier.
+The `map` is a function that generates a key based on the vehicle type
+and a label for which variable we want to summarise (duration or distance),
+with values being the duration and distance variables.
+The `reduce` is a function that takes the average of the values for
+each key.
+
+NOTE that we have to temporarily set the working directory
+if we are working somewhere within the `UNI_HOME` mount
+(otherwise the MapReduce run fails because it cannot create
+symbolic links).
+
+```{r}
+map <- function(k, v) {
+    subset <- v$TripDuration > 0 & v$TripDistance > 0
+    keyval(c(paste0(v$VehicleType[subset], "Duration"),
+             paste0(v$VehicleType[subset], "Distance")),
+           c(v$TripDuration[subset], 
+             v$TripDistance[subset]))
+}
+reduce <- function(k, v) {
+    keyval(k, mean(v))
+}      
+oldwd <- setwd(tempdir())
+meansResult <- 
+    mapreduce(input="/course/data.austintexas.gov/type-durn-dist.csv",
+              input.format=tripCSV,
+              map=map,
+              reduce=reduce,
+              verbose=FALSE)
+setwd(oldwd)
+averagesMR <- from.dfs(meansResult)
+averagesMR
+```
+
+```{r}
+all.equal(averagesDT[, 2:3], 
+          data.table(meanDuration=averagesMR$val[c(2, 4)], 
+                     meanDistance=averagesMR$val[c(1, 3)]))
+```
+
+The following code calculates the same summaries on the 
+data in Spark storage.  
+
+```{r}
+tripMeans <- tripSubset %>%
+    group_by(VehicleType) %>%
+    summarise(meanDuration=mean(TripDuration, na.rm=TRUE), 
+              meanDistance=mean(TripDistance, na.rm=TRUE))
+tripMeans
+```
+
+Although the R object that is returned
+ is still just a reference to the result, this time the result
+is easily small enough to warrant converting it over to a real R object.
+
+```{r}
+averagesSpark <- collect(tripMeans)
+all.equal(averagesDT[, 2:3], 
+          as.data.table(averagesSpark[2:1,2:3]))
+```
+
+## Model
+
+In this section, we will fit a simple linear regression model.
+We will also monitor total memory usage to demonstrate the
+different memory used by R when we fit the model in R versus
+performing the fit using Spark.
+
+```{r}
+library(profmem)
+```
+
+The following code uses standard R functions.
+
+```{r}
+p1 <- profmem({
+   fitDT <- lm(logDuration ~ logDistance, 
+               tripsDT[TripDuration > 0 & TripDistance > 0])
+})
+fitDT
+```
+
+The next code uses Spark's Machine Learning Library to fit the model
+on the data in Spark storage.  The resulting coefficients are the
+same.
+
+```{r}
+p2 <- profmem({
+    fitSpark <- tripSubset %>%
+        ml_linear_regression(logDuration ~ logDistance)
+})
+fitSpark
+```
+
+The memory usage in R is much higher using `stats::lm()`, 
+compared to `sparklyr::ml_linear_regression()`, because
+the latter performs its fitting in the Spark framework, not in R.
+
+```{r}
+total(p1)
+total(p2)
+```
+
+## Conclusion
+
+The data set is a single 100Mb CSV containing three variables: trip type,
+trip duration, and trip distance.
+
+We were able to work efficiently with these data entirely within R using the
+'data.table' package to read the data in, tidy and transform the data,
+calculate simple summaries, and fit a linear model.
+However, this approach is limited to data that can fit into RAM all at once.
+
+We also made use of the Hadoop MapReduce framework to load the
+data into Hadoop storage and calculate simple summaries via a
+"map" step that provides different keys for different groups of values
+and a "reduce" step that calculates the average value for each key.
+This approach would scale to any size of data set (given the necessary
+hardware and Hadoop installation and configuration).
+
+We also made use of the Apache Spark framework to load the data into
+Spark storage then tidy and transform the data, calculate simple 
+summaries, and fit a linear regression model. Almost all of the
+real work occurred within the Spark
+framework; we just directed operations via an R interface using
+the 'sparklyr' and  'dplyr' packages.  This approach would also
+scale to very large data sets.
